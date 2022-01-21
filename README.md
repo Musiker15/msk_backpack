@@ -7,6 +7,8 @@ FiveM Script - Usable Backpack Item
 * You can use the `bag` Item, then you get `nobag` Item and a Bag will be added to your Ped.
 * If you use `nobag` Item then then the Bag will be removed from your Ped an you get the `bag` Item.
 
+This Script works very well with the `Backpack Plugin` from `Chezza Inventory`
+
 ## Config
 ```lua
 Config = {}
