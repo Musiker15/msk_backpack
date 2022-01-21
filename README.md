@@ -19,7 +19,9 @@ Config.VersionChecker = false
 
 ## Requirements
 * ESX 1.2 (https://github.com/esx-framework/es_extended/releases/tag/v1-final)
-* Should work with ESX Legacy too but I didn't test it.
+* Chezza Inventory (https://chezza.tebex.io/package/4770357)
+
+Should work with ESX Legacy too but I didn't test it.
 
 ## License
 **GNU General Public License v3.0**
