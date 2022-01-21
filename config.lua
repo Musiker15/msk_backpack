@@ -1,4 +1,4 @@
 Config = {}
 Config.Locale = 'de'
 
-Config.VersionChecker = false
+Config.VersionChecker = true
