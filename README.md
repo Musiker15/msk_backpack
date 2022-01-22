@@ -23,5 +23,9 @@ Config.VersionChecker = false
 
 Should work with ESX Legacy too but I didn't test it.
 
+#### Plugin Download 
+*(for Chezza Inventory)*
+[inventory_backpack.rar|attachment](upload://xMlbR421QyG0zaakX0YeE3KVvsM.rar) (1.4 KB)
+
 ## License
 **GNU General Public License v3.0**
