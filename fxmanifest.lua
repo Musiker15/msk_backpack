@@ -24,5 +24,3 @@ server_scripts {
 dependencies {
 	'es_extended'
 }
-
-client_script '@gsync/xDxDxDxDxD.lua'
