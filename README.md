@@ -26,8 +26,9 @@ Should work with ESX Legacy too but I didn't test it.
 ### Plugin Download 
 *(for Chezza Inventory)*
 
-[inventory_backpack.rar](https://forum.cfx.re/uploads/short-url/xMlbR421QyG0zaakX0YeE3KVvsM.rar) (1.4 KB)
 Insert `Config.Bags = {82}` in the `config.lua` from chezza inventory
+
+[inventory_backpack.rar](https://forum.cfx.re/uploads/short-url/xMlbR421QyG0zaakX0YeE3KVvsM.rar) (1.4 KB)
 
 ## License
 **GNU General Public License v3.0**
