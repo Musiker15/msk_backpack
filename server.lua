@@ -14,6 +14,10 @@ ESX.RegisterUsableItem('bag', function(source)
     else
         TriggerClientEvent('esx:showNotification', source, _U('has_bag'))
     end
+
+    if Config.BagInventory then
+        xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight + Config.BagWeight)
+    end
 end)
 
 -- No Bag
@@ -28,6 +32,10 @@ ESX.RegisterUsableItem('nobag', function(source)
         TriggerClientEvent('esx:showNotification', source, _U('used_nobag'))
     else
         TriggerClientEvent('esx:showNotification', source, _U('had_bag'))
+    end
+
+    if Config.BagInventory then
+        xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight)
     end
 end)
 
