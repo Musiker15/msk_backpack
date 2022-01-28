@@ -30,5 +30,9 @@ Insert `Config.Bags = {82}` in the `config.lua` from chezza inventory
 
 [inventory_backpack.rar](https://forum.cfx.re/uploads/short-url/xMlbR421QyG0zaakX0YeE3KVvsM.rar) (1.4 KB)
 
+## Events
+* Search - `TriggerEvent('inventory:openPlayerInventory', GetPlayerServerId(closestPlayer))`
+* Search Bag - `TriggerServerEvent('inventory:updateStealInventoryBag', GetPlayerServerId(PlayerId()), GetPlayerServerId(closestPlayer))`
+
 ## License
 **GNU General Public License v3.0**
