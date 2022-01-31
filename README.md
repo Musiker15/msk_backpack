@@ -29,9 +29,10 @@ Should work with ESX Legacy too but I didn't test it.
 Insert `Config.Bags = {82}` in the `config.lua` from chezza inventory
 
 [inventory_backpack.rar](https://forum.cfx.re/uploads/short-url/xMlbR421QyG0zaakX0YeE3KVvsM.rar) (1.4 KB)
+## Events / Commands
+* `/openbag` - Open your own Bag
+* `/stealbag` - Open the Bag from Player next to you
 
-## Events
-* Search - `TriggerEvent('inventory:openPlayerInventory', GetPlayerServerId(closestPlayer))`
 * Search Bag - `TriggerServerEvent('inventory:updateStealInventoryBag', GetPlayerServerId(PlayerId()), GetPlayerServerId(closestPlayer))`
 
 ## License
