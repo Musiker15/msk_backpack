@@ -31,7 +31,7 @@ Insert `Config.Bags = {82}` in the `config.lua` from chezza inventory
 #### Events / Commands
 * `/openbag` - Open your own Bag
 * `/stealbag` - Open the Bag from Player next to you
-* Search Bag - `TriggerServerEvent('inventory:updateStealInventoryBag', GetPlayerServerId(PlayerId()), GetPlayerServerId(closestPlayer))`
+* Search Bag [clientsided] - `TriggerServerEvent('inventory:updateStealInventoryBag', GetPlayerServerId(PlayerId()), GetPlayerServerId(closestPlayer))`
 
 ## License
 **GNU General Public License v3.0**
