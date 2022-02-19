@@ -2,6 +2,7 @@
 FiveM Script - Usable Backpack Item
 
 **Forum:** https://forum.cfx.re/t/release-esx-usable-backpack-item/4805469
+**Discord:** https://discord.gg/5hHSBRHvJE
 
 ## Description
 * You can use the `bag` Item, then you get `nobag` Item and a Bag will be added to your Ped.
