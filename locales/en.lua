@@ -3,4 +3,6 @@ Locales ['en'] = {
 	['used_nobag'] = 'You put your bag down',
 	['has_bag'] = 'You already have a bag',
 	['had_bag'] = 'You dont have a bag on',
+	['noBag'] = 'You need a bag to use this weapon',
+	['otherBag'] = 'You need another bag for that',
 }

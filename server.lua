@@ -1,41 +1,69 @@
 local ESX = nil
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
+RegisterServerEvent('esx_bag:setMaxWeight')
+AddEventHandler('esx_bag:setMaxWeight', function()
+    local xPlayer = ESX.GetPlayerFromId(source)
+
+    xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight + Config.BagWeight)
+    --TriggerClientEvent('inventory:refresh', source)
+end)
+
 -- Bag
 ESX.RegisterUsableItem('bag', function(source)
 	local xPlayer = ESX.GetPlayerFromId(source)
-    local hasBag = xPlayer.getInventoryItem('nobag')
+    local hasBag = xPlayer.getInventoryItem('nobag').count
     
-    if hasBag.count == 0 then
+    if hasBag == 0 then
         TriggerClientEvent('esx_bag:setBag', source)
         xPlayer.removeInventoryItem('bag', 1)
         xPlayer.addInventoryItem("nobag", 1)
+
+        if Config.BagInventory then
+            if Config.Debug then
+                print('playerWeight: ' .. xPlayer.getMaxWeight())
+                print('esxWeight: ' .. ESX.GetConfig().MaxWeight)
+            end
+
+            xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight + Config.BagWeight)
+
+            if Config.Debug then
+                print('playerWeight add bag: ' .. xPlayer.getMaxWeight())
+            end
+        end
+
         TriggerClientEvent('esx:showNotification', source, _U('used_bag'))
     else
         TriggerClientEvent('esx:showNotification', source, _U('has_bag'))
-    end
-
-    if Config.BagInventory then
-        xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight + Config.BagWeight)
     end
 end)
 
 -- No Bag
 ESX.RegisterUsableItem('nobag', function(source)
 	local xPlayer = ESX.GetPlayerFromId(source)
-    local hasBag = xPlayer.getInventoryItem('bag')
+    local hasBag = xPlayer.getInventoryItem('bag').count
 
-    if hasBag.count == 0 then
+    if hasBag == 0 then
         TriggerClientEvent('esx_bag:setdelBag', source)
         xPlayer.removeInventoryItem('nobag', 1)
         xPlayer.addInventoryItem("bag", 1)
+
+        if Config.BagInventory then
+            if Config.Debug then
+                print('playerWeight: ' .. xPlayer.getMaxWeight())
+                print('esxWeight: ' .. ESX.GetConfig().MaxWeight)
+            end
+
+            xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight)
+
+            if Config.Debug then
+                print('playerWeight remove bag: ' .. xPlayer.getMaxWeight())
+            end
+        end
+        
         TriggerClientEvent('esx:showNotification', source, _U('used_nobag'))
     else
         TriggerClientEvent('esx:showNotification', source, _U('had_bag'))
-    end
-
-    if Config.BagInventory then
-        xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight)
     end
 end)
 
