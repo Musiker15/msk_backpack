@@ -40,8 +40,7 @@ Config.Weapons = {
 
 Should work with ESX Legacy too but I didn't test it.
 
-### Plugin Download 
-*(for Chezza Inventory)*
+### Chezza Inventory Plugin
 
 Add `Config.Bags = {82}` in the `config.lua` from chezza inventory
 
