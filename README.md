@@ -43,7 +43,7 @@ Should work with ESX Legacy too but I didn't test it.
 ### Plugin Download 
 *(for Chezza Inventory)*
 
-Insert `Config.Bags = {82}` in the `config.lua` from chezza inventory
+Add `Config.Bags = {82}` in the `config.lua` from chezza inventory
 
 #### Events / Commands
 * `/openbag` - Open your own Bag
