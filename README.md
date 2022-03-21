@@ -35,7 +35,9 @@ Config.Weapons = {
 ```
 
 ## Requirements
-* ESX 1.2 (v1-final)
+* esx_skin
+* skinchanger
+* ESX 1.2 *(v1-final)* / Legacy
 * Chezza Inventory (https://forum.cfx.re/t/paid-release-chezzas-inventory-esx/2040417)
 
 Should work with ESX Legacy too but I didn't test it.
