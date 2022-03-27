@@ -3,7 +3,7 @@ games { 'gta5' }
 
 author 'Musiker15'
 description 'ESX Backpack'
-version '2.0'
+version '2.1'
 
 shared_scripts {
 	'@es_extended/locale.lua',
@@ -16,6 +16,7 @@ client_scripts {
 }
 
 server_scripts {
+	'@mysql-async/lib/MySQL.lua',
 	'server.lua'
 }
 

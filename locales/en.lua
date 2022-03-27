@@ -5,4 +5,5 @@ Locales ['en'] = {
 	['had_bag'] = 'You dont have a bag on',
 	['noBag'] = 'You need a bag to use this weapon',
 	['otherBag'] = 'You need another bag for that',
+	['itemsInBag'] = 'Solange Items in der Tasche sind kannst du diese nicht ablegen.',
 }

@@ -5,13 +5,13 @@ RegisterCommand('openbag', function(source)
     local xPlayer = ESX.GetPlayerFromId(source)
 
     TriggerClientEvent('inventory:openInventoryBag', source, xPlayer.getName(source), xPlayer.getIdentifier(source))
-end, false)
+end)
     
 RegisterCommand('stealbag', function(source)
     local xPlayer = ESX.GetPlayerFromId(source)
 
     TriggerClientEvent('inventory:stealInventoryBag', source)
-end, false)
+end)
     
 RegisterNetEvent('inventory:updateStealInventoryBag')
 AddEventHandler('inventory:updateStealInventoryBag', function(source, target)
@@ -20,5 +20,5 @@ AddEventHandler('inventory:updateStealInventoryBag', function(source, target)
 
     TriggerClientEvent('esx:showNotification', target, ''..xPlayer.getName(source)..' durchsucht deine Tasche' )
     TriggerClientEvent('esx:showNotification', source, 'Du durchsuchst die Tasche von: '..tPlayer.getName(target)..'' )
-    TriggerClientEvent('inventory:openInventoryBag', source, tPlayer.getName(target), tPlayer.getIdentifier(target))
+    TriggerClientEvent('inventory:openOtherInventoryBag', source, tPlayer.getName(target), tPlayer.getIdentifier(target))
 end)

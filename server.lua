@@ -20,16 +20,12 @@ ESX.RegisterUsableItem('bag', function(source)
         xPlayer.addInventoryItem("nobag", 1)
 
         if Config.BagInventory then
-            if Config.Debug then
-                print('playerWeight: ' .. xPlayer.getMaxWeight())
-                print('esxWeight: ' .. ESX.GetConfig().MaxWeight)
-            end
+            debug('playerWeight: ' .. xPlayer.getMaxWeight())
+            debug('esxWeight: ' .. ESX.GetConfig().MaxWeight)
 
             xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight + Config.BagWeight)
 
-            if Config.Debug then
-                print('playerWeight add bag: ' .. xPlayer.getMaxWeight())
-            end
+            debug('playerWeight add bag: ' .. xPlayer.getMaxWeight())
         end
 
         TriggerClientEvent('esx:showNotification', source, _U('used_bag'))
@@ -43,29 +39,93 @@ ESX.RegisterUsableItem('nobag', function(source)
 	local xPlayer = ESX.GetPlayerFromId(source)
     local hasBag = xPlayer.getInventoryItem('bag').count
 
-    if hasBag == 0 then
-        TriggerClientEvent('esx_bag:setdelBag', source)
-        xPlayer.removeInventoryItem('nobag', 1)
-        xPlayer.addInventoryItem("bag", 1)
-
-        if Config.BagInventory then
-            if Config.Debug then
-                print('playerWeight: ' .. xPlayer.getMaxWeight())
-                print('esxWeight: ' .. ESX.GetConfig().MaxWeight)
-            end
-
-            xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight)
-
-            if Config.Debug then
-                print('playerWeight remove bag: ' .. xPlayer.getMaxWeight())
-            end
-        end
+    if Config.ItemsInBag then
+        if itemsInBag(xPlayer) then
+            if hasBag == 0 then
+                TriggerClientEvent('esx_bag:setdelBag', source)
+                xPlayer.removeInventoryItem('nobag', 1)
+                xPlayer.addInventoryItem("bag", 1)
         
-        TriggerClientEvent('esx:showNotification', source, _U('used_nobag'))
+                if Config.BagInventory then
+                    debug('playerWeight: ' .. xPlayer.getMaxWeight())
+                    debug('esxWeight: ' .. ESX.GetConfig().MaxWeight)
+        
+                    xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight)
+        
+                    debug('playerWeight remove bag: ' .. xPlayer.getMaxWeight())
+                end
+                
+                TriggerClientEvent('esx:showNotification', source, _U('used_nobag'))
+            else
+                TriggerClientEvent('esx:showNotification', source, _U('had_bag'))
+            end
+        else
+            TriggerClientEvent('esx:showNotification', source, _U('itemsInBag'))
+        end
     else
-        TriggerClientEvent('esx:showNotification', source, _U('had_bag'))
+        if hasBag == 0 then
+            TriggerClientEvent('esx_bag:setdelBag', source)
+            xPlayer.removeInventoryItem('nobag', 1)
+            xPlayer.addInventoryItem("bag", 1)
+    
+            if Config.BagInventory then
+                debug('playerWeight: ' .. xPlayer.getMaxWeight())
+                debug('esxWeight: ' .. ESX.GetConfig().MaxWeight)
+    
+                xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight)
+    
+                debug('playerWeight remove bag: ' .. xPlayer.getMaxWeight())
+            end
+            
+            TriggerClientEvent('esx:showNotification', source, _U('used_nobag'))
+        else
+            TriggerClientEvent('esx:showNotification', source, _U('had_bag'))
+        end
     end
 end)
+
+function itemsInBag(xPlayer)
+    MySQL.Async.fetchAll("SELECT * FROM inventories WHERE identifier = @identifier AND type = @type", { 
+        ['@identifier'] = xPlayer.identifier,
+        ['@type'] = 'bag'
+        }, function(result)
+        if result[1] then
+            debug('identifier: ' .. result[1].identifier)
+            debug('type: ' .. result[1].type)
+            debug('data: ' .. result[1].data)
+
+            if result[1].data ~= '[]' then
+                return true
+            end
+        else 
+            debug('result not found')
+        end
+    end)
+
+    --[[ local result = MySQL.Sync.fetchAll("SELECT * FROM inventories WHERE identifier = @identifier AND type = @type", { 
+        ['@identifier'] = xPlayer.identifier,
+        ['@type'] = 'bag'
+    })
+    if result[1] then
+        debug('identifier: ' .. result[1].identifier)
+        debug('type: ' .. result[1].type)
+        debug('data: ' .. result[1].data)
+    
+        if result[1].data ~= '[]' then
+            return true
+        end
+    else 
+        debug('result not found')
+    end ]]
+    
+    return false
+end
+
+function debug(msg)
+	if Config.Debug then
+		print(msg)
+	end
+end
 
 ---- GitHub Updater ----
 function GetCurrentVersion()

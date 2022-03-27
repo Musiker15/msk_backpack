@@ -16,27 +16,35 @@ AddEventHandler('esx:playerLoaded', function(playerData)
     if xPlayer then
         if Config.BagInventory then
             ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
-                if skin.bags_1 == 82 then -- Bag Skin
+                if skin.bags_1 == Config.bagID_1 then -- Bag Skin
                     TriggerServerEvent('esx_bag:setMaxWeight')
                 end
             end)
         end
     else
-        if Config.Debug then
-            print('xPlayer not found')
-        end
+        debug('xPlayer not found')
     end
 end)
 
 RegisterNetEvent('esx_bag:setBag')
 AddEventHandler('esx_bag:setBag', function(id)
     ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
-        if skin.bags_1 ~= 82 then -- Bag Skin
-            TriggerEvent('skinchanger:change', "bags_1", 82)
-            TriggerEvent('skinchanger:change', "bags_2", 0)
-            TriggerEvent('skinchanger:getSkin', function(skin)
-                TriggerServerEvent('esx_skin:save', skin)
-            end)
+        if skin.sex == 0 then -- Male
+            if skin.bags_1 ~= Config.Bags.male.bagID_1 then -- Bag Skin
+                TriggerEvent('skinchanger:change', "bags_1", Config.Bags.male.bagID_1)
+                TriggerEvent('skinchanger:change', "bags_2", Config.Bags.male.bagID_2)
+                TriggerEvent('skinchanger:getSkin', function(skin)
+                    TriggerServerEvent('esx_skin:save', skin)
+                end)
+            end
+        else -- Female
+            if skin.bags_1 ~= Config.Bags.female.bagID_1 then -- Bag Skin
+                TriggerEvent('skinchanger:change', "bags_1", Config.Bags.female.bagID_1)
+                TriggerEvent('skinchanger:change', "bags_2", Config.Bags.female.bagID_2)
+                TriggerEvent('skinchanger:getSkin', function(skin)
+                    TriggerServerEvent('esx_skin:save', skin)
+                end)
+            end
         end
     end)
 end)
@@ -44,12 +52,42 @@ end)
 RegisterNetEvent('esx_bag:setdelBag')
 AddEventHandler('esx_bag:setdelBag', function(id)
     ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
-        if skin.bags_1 ~= 63 then -- Parachute Skin - esx_parachute by me :)
-            TriggerEvent('skinchanger:change', "bags_1", 0)
-            TriggerEvent('skinchanger:change', "bags_2", 0)
-            TriggerEvent('skinchanger:getSkin', function(skin)
-                TriggerServerEvent('esx_skin:save', skin)
-            end)
+        if Config.useParachute then
+            if skin.sex == 0 then -- Male
+                if skin.bags_1 ~= 63 then -- Parachute Skin - esx_parachute by me :)
+                    TriggerEvent('skinchanger:change', "bags_1", 0)
+                    TriggerEvent('skinchanger:change', "bags_2", 0)
+                    TriggerEvent('skinchanger:getSkin', function(skin)
+                        TriggerServerEvent('esx_skin:save', skin)
+                    end)
+                end
+            else -- Female
+                if skin.bags_1 ~= 63 then -- Parachute Skin - esx_parachute by me :)
+                    TriggerEvent('skinchanger:change', "bags_1", 0)
+                    TriggerEvent('skinchanger:change', "bags_2", 0)
+                    TriggerEvent('skinchanger:getSkin', function(skin)
+                        TriggerServerEvent('esx_skin:save', skin)
+                    end)
+                end
+            end
+        else
+            if skin.sex == 0 then -- Male
+                if skin.bags_1 == Config.Bags.male.bagID_1 then
+                    TriggerEvent('skinchanger:change', "bags_1", 0)
+                    TriggerEvent('skinchanger:change', "bags_2", 0)
+                    TriggerEvent('skinchanger:getSkin', function(skin)
+                        TriggerServerEvent('esx_skin:save', skin)
+                    end)
+                end
+            else -- Female
+                if skin.bags_1 == Config.Bags.female.bagID_1 then
+                    TriggerEvent('skinchanger:change', "bags_1", 0)
+                    TriggerEvent('skinchanger:change', "bags_2", 0)
+                    TriggerEvent('skinchanger:getSkin', function(skin)
+                        TriggerServerEvent('esx_skin:save', skin)
+                    end)
+                end
+            end
         end
     end)
 end)
@@ -71,9 +109,7 @@ if Config.CarryLongWeapon then
                             SetCurrentPedWeapon(playerPed, GetHashKey("WEAPON_UNARMED"), true)
                             ESX.ShowNotification(_U('otherBag'))
                         else
-                            if Config.Debug then
-                                print('Has Bag and got weapon')
-                            end
+                            debug('Has Bag and got weapon')
                         end
                     end
                 end)
@@ -89,4 +125,10 @@ if Config.CarryLongWeapon then
         end
         return false
     end
+end
+
+function debug(msg)
+	if Config.Debug then
+		print(msg)
+	end
 end
