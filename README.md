@@ -53,7 +53,6 @@ Add `Config.Bags = {82}` and `Config.BagWeight = 60` in the `config.lua` from ch
 #### Events / Commands
 * `/openbag` - Open your own Bag
 * `/stealbag` - Open the Bag from Player next to you
-* Search Bag *[clientsided]* - `TriggerServerEvent('inventory:updateStealInventoryBag', GetPlayerServerId(PlayerId()), GetPlayerServerId(closestPlayer))`
 
 ## License
 **GNU General Public License v3.0**
