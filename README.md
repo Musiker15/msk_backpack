@@ -54,5 +54,9 @@ Add `Config.Bags = {82}` and `Config.BagWeight = 60` in the `config.lua` from ch
 * `/openbag` - Open your own Bag
 * `/stealbag` - Open the Bag from Player next to you
 
+**Added Client Events to add the Commands f.e. in a Menu**
+* TriggerEvent('inventory:openBagViaMenu')
+* TriggerEvent('inventory:openStealBagViaMenu')
+
 ## License
 **GNU General Public License v3.0**
