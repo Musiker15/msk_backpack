@@ -53,6 +53,8 @@ Should work with ESX Legacy too but I didn't test it.
 
 Add `Config.Bags = {82}` and `Config.BagWeight = 60` in the `config.lua` from chezza inventory.
 
+Create a new folder in `inventory/plugins/` f.e. `backpack` and put the files `cl_backpack.lua` and `sv_backpack.lua` in the `backpack` folder.
+
 #### Events / Commands
 * `/openbag` - Open your own Bag
 * `/stealbag` - Open the Bag from Player next to you
