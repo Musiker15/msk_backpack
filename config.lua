@@ -24,8 +24,7 @@ Config.Weapons = {
     'WEAPON_ASSAULTRIFLE',
 }
 ----------------------------------------------------------------
--- Experimental // Not working at the moment for Chezza Inventory!
+-- Experimental // Not working at the moment!
 Config.BagInventory = false -- Set 'true' if you don't want the pocket inventory but want to expand the player inventory
 Config.BagWeight = 60 -- Set the Bag Weight if 'Config.BagInventory = true'
-
 Config.ItemsInBag = false -- Set true if you want that players cant use 'nobag' Item if Items in Bag
