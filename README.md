@@ -8,6 +8,9 @@ FiveM Script - Usable Backpack Item
 ## Description
 * You can use the `bag` Item, then you get `nobag` Item and a Bag will be added to your Ped.
 * If you use `nobag` Item then then the Bag will be removed from your Ped an you get the `bag` Item.
+* Open own Bag with Command
+* Steal Bag from closest Player with Command
+* Works with Character Names not FiveM Names
 
 ## Config
 ```lua
