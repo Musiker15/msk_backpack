@@ -5,6 +5,9 @@ FiveM Script - Usable Backpack Item
 
 **Discord Support:** https://discord.gg/5hHSBRHvJE
 
+**Preview 1:** https://streamable.com/iog8fy
+**Preview 2:** https://streamable.com/61a8ur
+
 ## Description
 * You can use the `bag` Item, then you get `nobag` Item and a Bag will be added to your Ped.
 * If you use `nobag` Item then then the Bag will be removed from your Ped an you get the `bag` Item.
