@@ -18,7 +18,7 @@ Config = {}
 ----------------------------------------------------------------
 Config.Locale = 'de'
 Config.VersionChecker = true
-Config.Debug = true
+Config.Debug = false
 ----------------------------------------------------------------
 -- If you use the Plugin for Chezza Inventory, make sure this is the same ID
 -- as in Config.Bags = {82} in the config.lua from chezza inventory
@@ -27,8 +27,13 @@ Config.Bags = {
     female = {bagID_1 = 82, bagID_2 = 0}
 }
 ----------------------------------------------------------------
--- If set to true go to server.lua and change the IDs to what you set in esx_parachute
-Config.useParachute = true -- Set false if you dont use my esx_parchute Script
+-- If you want to expand the Player Inventory and dont want the secondary Inventory by typing the /openbag Command
+-- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
+Config.BagInventory = false -- Set true if you want to expand the player inventory
+Config.BagWeight = 60 -- Set the Bag Weight if 'Config.BagInventory = true'
+----------------------------------------------------------------
+-- If set to true go to client.lua and change the IDs to what you set in esx_parachute
+Config.useParachute = true -- Set true if you use my esx_parchute Script
 ----------------------------------------------------------------
 Config.CarryLongWeapon = true -- Set 'true' if you want that Players can only carry a Weapon if they have a Bag
 Config.WeaponBags = {82} -- Backpack IDs // {ID, ID, ID} | Only for 'Config.CarryLongWeapon' function!!
@@ -51,7 +56,12 @@ Should work with ESX Legacy too but I didn't test it.
 
 ### Chezza Inventory Plugin
 
-Add `Config.Bags = {82}` and `Config.BagWeight = 60` in the `config.lua` from chezza inventory.
+Add the following in the `config.lua` from chezza inventory.
+```lua
+Config.Bags = {82}
+Config.BagWeight = 60
+Config.BagInventory = true -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
+```
 
 Create a new folder in `inventory/plugins/` f.e. `backpack` and put the files `cl_backpack.lua` and `sv_backpack.lua` in the `backpack` folder.
 

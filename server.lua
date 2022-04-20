@@ -1,13 +1,36 @@
 local ESX = nil
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
-RegisterServerEvent('esx_bag:setMaxWeight')
-AddEventHandler('esx_bag:setMaxWeight', function()
-    local xPlayer = ESX.GetPlayerFromId(source)
+local isSetMaxWeight = false
+local isSet = false
 
-    xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight + Config.BagWeight)
-    --TriggerClientEvent('inventory:refresh', source)
+RegisterServerEvent('esx_bag:delBackpack')
+AddEventHandler('esx_bag:delBackpack', function()
+    local xPlayer = ESX.GetPlayerFromId(source)
+    local hasBag = xPlayer.getInventoryItem('nobag').count
+
+    if hasBag > 0 then
+        TriggerClientEvent('esx_bag:setdelBag', source)
+        xPlayer.removeInventoryItem('nobag', 1)
+        xPlayer.addInventoryItem("bag", 1)
+    end
 end)
+
+if Config.Debug then
+    Citizen.CreateThread(function()
+        while true do
+            for k,players in pairs(GetPlayers()) do
+                local xPlayer = ESX.GetPlayerFromId(players)
+
+                if (xPlayer ~= nil) then
+                    debug('playerMaxWeight: ' .. xPlayer.getMaxWeight())
+                end
+            end
+
+            Citizen.Wait(5000)
+        end
+    end)
+end
 
 -- Bag
 ESX.RegisterUsableItem('bag', function(source)
@@ -20,12 +43,8 @@ ESX.RegisterUsableItem('bag', function(source)
         xPlayer.addInventoryItem("nobag", 1)
 
         if Config.BagInventory then
-            debug('playerWeight: ' .. xPlayer.getMaxWeight())
-            debug('esxWeight: ' .. ESX.GetConfig().MaxWeight)
-
-            xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight + Config.BagWeight)
-
-            debug('playerWeight add bag: ' .. xPlayer.getMaxWeight())
+            debug('playerMaxWeight before add bag: ' .. xPlayer.getMaxWeight())
+            isSetMaxWeight = true
         end
 
         TriggerClientEvent('esx:showNotification', source, _U('used_bag'))
@@ -40,27 +59,40 @@ ESX.RegisterUsableItem('nobag', function(source)
     local hasBag = xPlayer.getInventoryItem('bag').count
 
     if Config.ItemsInBag then
-        if itemsInBag(xPlayer) then
-            if hasBag == 0 then
-                TriggerClientEvent('esx_bag:setdelBag', source)
-                xPlayer.removeInventoryItem('nobag', 1)
-                xPlayer.addInventoryItem("bag", 1)
-        
-                if Config.BagInventory then
-                    debug('playerWeight: ' .. xPlayer.getMaxWeight())
-                    debug('esxWeight: ' .. ESX.GetConfig().MaxWeight)
-        
-                    xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight)
-        
-                    debug('playerWeight remove bag: ' .. xPlayer.getMaxWeight())
-                end
-                
-                TriggerClientEvent('esx:showNotification', source, _U('used_nobag'))
+        if Config.BagInventory then
+            local playerWeight = xPlayer.getWeight()
+
+            if playerWeight > ESX.GetConfig().MaxWeight then
+                TriggerClientEvent('esx:showNotification', source, _U('itemsInBag'))
             else
-                TriggerClientEvent('esx:showNotification', source, _U('had_bag'))
+                if hasBag == 0 then
+                    TriggerClientEvent('esx_bag:setdelBag', source)
+                    xPlayer.removeInventoryItem('nobag', 1)
+                    xPlayer.addInventoryItem("bag", 1)
+            
+                    if Config.BagInventory then
+                        debug('playerMaxWeight before remove bag: ' .. xPlayer.getMaxWeight())
+                        isSetMaxWeight = false
+                    end
+                    
+                    TriggerClientEvent('esx:showNotification', source, _U('used_nobag'))
+                else
+                    TriggerClientEvent('esx:showNotification', source, _U('had_bag'))
+                end
             end
         else
-            TriggerClientEvent('esx:showNotification', source, _U('itemsInBag'))
+            if itemsInBag(xPlayer) then
+                if hasBag == 0 then
+                    TriggerClientEvent('esx_bag:setdelBag', source)
+                    xPlayer.removeInventoryItem('nobag', 1)
+                    xPlayer.addInventoryItem("bag", 1)
+                    TriggerClientEvent('esx:showNotification', source, _U('used_nobag'))
+                else
+                    TriggerClientEvent('esx:showNotification', source, _U('had_bag'))
+                end
+            else
+                TriggerClientEvent('esx:showNotification', source, _U('itemsInBag'))
+            end
         end
     else
         if hasBag == 0 then
@@ -69,18 +101,34 @@ ESX.RegisterUsableItem('nobag', function(source)
             xPlayer.addInventoryItem("bag", 1)
     
             if Config.BagInventory then
-                debug('playerWeight: ' .. xPlayer.getMaxWeight())
-                debug('esxWeight: ' .. ESX.GetConfig().MaxWeight)
-    
-                xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight)
-    
-                debug('playerWeight remove bag: ' .. xPlayer.getMaxWeight())
+                debug('playerMaxWeight before remove bag: ' .. xPlayer.getMaxWeight())
+                isSetMaxWeight = false
             end
             
             TriggerClientEvent('esx:showNotification', source, _U('used_nobag'))
         else
             TriggerClientEvent('esx:showNotification', source, _U('had_bag'))
         end
+    end
+end)
+
+Citizen.CreateThread(function()
+    while true do
+        for k,players in pairs(GetPlayers()) do
+            local xPlayer = ESX.GetPlayerFromId(players)
+
+            if (xPlayer ~= nil) then
+                if (not isSet and isSetMaxWeight) then
+                    xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight + Config.BagWeight)
+                    isSet = true
+                elseif (isSet and not isSetMaxWeight) then
+                    isSet = false
+                    xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight)
+                end
+            end
+        end
+
+        Citizen.Wait(1000)
     end
 end)
 
@@ -96,6 +144,8 @@ function itemsInBag(xPlayer)
 
             if result[1].data ~= '[]' then
                 return true
+            else
+                return false
             end
         else 
             debug('result not found')
@@ -117,8 +167,6 @@ function itemsInBag(xPlayer)
     else 
         debug('result not found')
     end ]]
-    
-    return false
 end
 
 function debug(msg)
