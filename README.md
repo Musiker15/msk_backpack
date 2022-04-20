@@ -60,7 +60,7 @@ Add the following in the `config.lua` from chezza inventory.
 ```lua
 Config.Bags = {82}
 Config.BagWeight = 60
-Config.BagInventory = true -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
+Config.BagInventory = false -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
 ```
 
 Create a new folder in `inventory/plugins/` f.e. `backpack` and put the files `cl_backpack.lua` and `sv_backpack.lua` in the `backpack` folder.
