@@ -5,7 +5,7 @@ Add the following in the `config.lua` from chezza inventory.
 ```lua
 Config.Bags = {82}
 Config.BagWeight = 60
-Config.BagInventory = true -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
+Config.BagInventory = false -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
 ```
 
 ## Chezza Inventory v4
@@ -15,7 +15,7 @@ Add the following in the `config.lua` from chezza inventory.
 ```lua
 Config.Bags = {82}
 Config.BagWeight = 60
-Config.BagInventory = true -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
+Config.BagInventory = false -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
 ```
 
 ### Restart your Server and have fun :)
