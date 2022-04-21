@@ -8,7 +8,7 @@ Config.BagWeight = 60 -- Secondary Inventory
 -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
 -- Config.BagInventory = true // Expand the Inventory Space of the Player
 -- Config.BagInventory = false // Secondary Inventory by typing /openbag Command
-Config.BagInventory = true -- Expand Inventory Space
+Config.BagInventory = true
 ```
 
 ## Chezza Inventory v4
@@ -21,7 +21,7 @@ Config.BagWeight = 60 -- Secondary Inventory
 -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
 -- Config.BagInventory = true // Expand the Inventory Space of the Player
 -- Config.BagInventory = false // Secondary Inventory by typing /openbag Command
-Config.BagInventory = true -- Expand Inventory Space
+Config.BagInventory = true
 ```
 
 ### Restart your Server and have fun :)
