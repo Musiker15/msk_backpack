@@ -121,7 +121,7 @@ if Config.CarryLongWeapon then
                 end)
             end
         end
-    end) 
+    end)
 
     function CheckWeapon(hash)
         for k,v in pairs(Config.Weapons) do

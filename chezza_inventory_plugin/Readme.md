@@ -3,9 +3,10 @@ Put `cl_backpack.lua` in `/client/plugins/` folder and `sv_backpack.lua` in `/se
 
 Add the following in the `config.lua` from chezza inventory.
 ```lua
-Config.Bags = {82}
-Config.BagWeight = 60
-Config.BagInventory = false -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
+Config.Bags = {82} -- Set you Bag IDs here
+Config.BagWeight = 60 -- Secondary Inventory
+-- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
+Config.BagInventory = true -- Expand Inventory Space
 ```
 
 ## Chezza Inventory v4
@@ -13,9 +14,10 @@ Create a new folder in `inventory/plugins/` f.e. `backpack` and put the files `c
 
 Add the following in the `config.lua` from chezza inventory.
 ```lua
-Config.Bags = {82}
-Config.BagWeight = 60
-Config.BagInventory = false -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
+Config.Bags = {82} -- Set you Bag IDs here
+Config.BagWeight = 60 -- Secondary Inventory
+-- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
+Config.BagInventory = true -- Expand Inventory Space
 ```
 
 ### Restart your Server and have fun :)

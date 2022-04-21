@@ -3,7 +3,7 @@ games { 'gta5' }
 
 author 'Musiker15'
 description 'ESX Backpack'
-version '2.3'
+version '2.4'
 
 shared_scripts {
 	'@es_extended/locale.lua',

@@ -61,6 +61,7 @@ ESX.RegisterUsableItem('nobag', function(source)
     if Config.ItemsInBag then
         if Config.BagInventory then
             local playerWeight = xPlayer.getWeight()
+            debug('playerWeight: ' .. playerWeight)
 
             if playerWeight > ESX.GetConfig().MaxWeight then
                 TriggerClientEvent('esx:showNotification', source, _U('itemsInBag'))
@@ -82,6 +83,8 @@ ESX.RegisterUsableItem('nobag', function(source)
             end
         else
             if itemsInBag(xPlayer) then
+                debug('Trigger Event itemsInBag(xPlayer)')
+                
                 if hasBag == 0 then
                     TriggerClientEvent('esx_bag:setdelBag', source)
                     xPlayer.removeInventoryItem('nobag', 1)
@@ -91,6 +94,7 @@ ESX.RegisterUsableItem('nobag', function(source)
                     TriggerClientEvent('esx:showNotification', source, _U('had_bag'))
                 end
             else
+                debug('Trigger Notification itemsInBag')
                 TriggerClientEvent('esx:showNotification', source, _U('itemsInBag'))
             end
         end
@@ -133,40 +137,27 @@ Citizen.CreateThread(function()
 end)
 
 function itemsInBag(xPlayer)
-    MySQL.Async.fetchAll("SELECT * FROM inventories WHERE identifier = @identifier AND type = @type", { 
-        ['@identifier'] = xPlayer.identifier,
-        ['@type'] = 'bag'
-        }, function(result)
-        if result[1] then
-            debug('identifier: ' .. result[1].identifier)
-            debug('type: ' .. result[1].type)
-            debug('data: ' .. result[1].data)
-
-            if result[1].data ~= '[]' then
-                return true
-            else
-                return false
-            end
-        else 
-            debug('result not found')
-        end
-    end)
-
-    --[[ local result = MySQL.Sync.fetchAll("SELECT * FROM inventories WHERE identifier = @identifier AND type = @type", { 
+    local result = MySQL.Sync.fetchAll("SELECT * FROM inventories WHERE identifier = @identifier AND type = @type", { 
         ['@identifier'] = xPlayer.identifier,
         ['@type'] = 'bag'
     })
+
     if result[1] then
         debug('identifier: ' .. result[1].identifier)
         debug('type: ' .. result[1].type)
         debug('data: ' .. result[1].data)
-    
-        if result[1].data ~= '[]' then
+
+        if result[1].data == '[]' then
+            debug('Bag is empty')
             return true
+        else
+            debug('Items in Bag')
+            return false
         end
     else 
         debug('result not found')
-    end ]]
+        return false
+    end
 end
 
 function debug(msg)
