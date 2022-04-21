@@ -67,6 +67,8 @@ Add the following in the `config.lua` from chezza inventory.
 Config.Bags = {82} -- Set you Bag IDs here
 Config.BagWeight = 60 -- Secondary Inventory
 -- If Config.BagInventory = true you cant use the Commands /openbag and /stealbag !!!
+-- Config.BagInventory = true // Expand the Inventory Space of the Player
+-- Config.BagInventory = false // Secondary Inventory by typing /openbag Command
 Config.BagInventory = true -- Expand Inventory Space
 ```
 
