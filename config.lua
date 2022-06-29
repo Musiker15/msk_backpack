@@ -12,14 +12,13 @@ Config.Bags = {
 }
 Config.ItemsInBag = true -- Set true if you want that players cant use 'nobag' Item if there are Items in the Bag
 ----------------------------------------------------------------
--- Config.BagInventory = true // Expand the Inventory Space of the Player
--- Config.BagInventory = false // Secondary Inventory by typing /openbag Command
--- If Config.BagInventory = true then change this to the same value in config.lua of Chezza Inventory !!!
-Config.BagInventory = true
-Config.BagWeight = 60 -- Set the Value what added to the Inventory Space if 'Config.BagInventory = true'
+-- !!! Change this to the same value in config.lua of Chezza Inventory !!!
+-- Expand the Inventory Space of the Player // Secondary Inventory by typing /openbag Command
+Config.BagInventory = 'expand' -- 'expand' or 'secondary'
+Config.BagWeight = 60 -- Set the Value what added to the Inventory Space if Config.BagInventory = 'expand'
 ----------------------------------------------------------------
 -- If set to true go to client.lua and change the IDs to what you set in esx_parachute
-Config.useParachute = false -- Set true if you use my esx_parchute Script
+Config.useParachute = true -- Set true if you use my esx_parchute Script
 ----------------------------------------------------------------
 -- Experimental // Can cause performance problems
 Config.CarryLongWeapon = false -- Set 'true' if you want that Players can only carry a Weapon if they have a Bag

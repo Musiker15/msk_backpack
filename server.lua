@@ -16,7 +16,7 @@ AddEventHandler('esx_bag:delBackpack', function()
     end
 end)
 
-if Config.Debug then
+if Config.Debug and Config.BagInventory:match('expand') then
     Citizen.CreateThread(function()
         while true do
             for k,players in pairs(GetPlayers()) do
@@ -42,7 +42,7 @@ ESX.RegisterUsableItem('bag', function(source)
         xPlayer.removeInventoryItem('bag', 1)
         xPlayer.addInventoryItem("nobag", 1)
 
-        if Config.BagInventory then
+        if Config.BagInventory:match('expand') then
             debug('playerMaxWeight before add bag: ' .. xPlayer.getMaxWeight())
             isSetMaxWeight = true
         end
@@ -59,7 +59,7 @@ ESX.RegisterUsableItem('nobag', function(source)
     local hasBag = xPlayer.getInventoryItem('bag').count
 
     if Config.ItemsInBag then
-        if Config.BagInventory then
+        if Config.BagInventory:match('expand') then
             local playerWeight = xPlayer.getWeight()
             debug('playerWeight: ' .. playerWeight)
 
@@ -71,7 +71,7 @@ ESX.RegisterUsableItem('nobag', function(source)
                     xPlayer.removeInventoryItem('nobag', 1)
                     xPlayer.addInventoryItem("bag", 1)
             
-                    if Config.BagInventory then
+                    if Config.BagInventory:match('expand') then
                         debug('playerMaxWeight before remove bag: ' .. xPlayer.getMaxWeight())
                         isSetMaxWeight = false
                     end
@@ -104,7 +104,7 @@ ESX.RegisterUsableItem('nobag', function(source)
             xPlayer.removeInventoryItem('nobag', 1)
             xPlayer.addInventoryItem("bag", 1)
     
-            if Config.BagInventory then
+            if Config.BagInventory:match('expand') then
                 debug('playerMaxWeight before remove bag: ' .. xPlayer.getMaxWeight())
                 isSetMaxWeight = false
             end

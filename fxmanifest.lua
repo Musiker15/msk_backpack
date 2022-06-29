@@ -1,9 +1,10 @@
 fx_version 'adamant'
 games { 'gta5' }
 
-author 'Musiker15'
-description 'ESX Backpack'
-version '2.4'
+author 'Musiker15 - MSK Scripts'
+name 'MSK Backpack'
+description 'MSK Backpack Plugin for Chezza Inventory'
+version '2.4.1'
 
 shared_scripts {
 	'@es_extended/locale.lua',

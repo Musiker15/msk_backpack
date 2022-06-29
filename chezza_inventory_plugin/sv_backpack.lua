@@ -23,3 +23,24 @@ ESX.RegisterServerCallback('inventory:getUserData', function(source, cb)
 
 	cb(xPlayer.getName(), xPlayer.getIdentifier())
 end)
+
+ESX.RegisterServerCallback('inventory:getPlayerSkin', function(source, cb, player)
+	local xPlayer = ESX.GetPlayerFromId(player)
+
+	MySQL.query('SELECT skin FROM users WHERE identifier = @identifier', {
+		['@identifier'] = xPlayer.identifier
+	}, function(users)
+		local user, skin = users[1]
+
+		local jobSkin = {
+			skin_male   = xPlayer.job.skin_male,
+			skin_female = xPlayer.job.skin_female
+		}
+
+		if user.skin then
+			skin = json.decode(user.skin)
+		end
+
+		cb(skin, jobSkin)
+	end)
+end)

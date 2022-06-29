@@ -14,7 +14,7 @@ AddEventHandler('esx:playerLoaded', function(playerData)
     Citizen.Wait(1000) -- Please Do Not Touch!
     
     if xPlayer then
-        if Config.BagInventory then
+        if Config.BagInventory:match('expand') then
             ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
                 if skin.sex == 0 then -- Male
                     if skin.bags_1 == Config.Bags.male.bagID_1 then -- Bag Skin
