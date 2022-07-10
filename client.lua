@@ -133,8 +133,14 @@ if Config.CarryLongWeapon then
     end
 end
 
-function debug(msg)
+function debug(msg, msg2, msg3)
 	if Config.Debug then
-		print(msg)
+        if msg3 then
+            print(msg, msg2, msg3)
+        elseif not msg3 and msg2 then
+            print(msg, msg2)
+        else
+		    print(msg)
+        end
 	end
 end

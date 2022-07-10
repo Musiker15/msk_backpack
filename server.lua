@@ -1,9 +1,6 @@
 local ESX = nil
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
-local isSetMaxWeight = false
-local isSet = false
-
 RegisterServerEvent('esx_bag:delBackpack')
 AddEventHandler('esx_bag:delBackpack', function()
     local xPlayer = ESX.GetPlayerFromId(source)
@@ -23,7 +20,7 @@ if Config.Debug and Config.BagInventory:match('expand') then
                 local xPlayer = ESX.GetPlayerFromId(players)
 
                 if (xPlayer ~= nil) then
-                    debug('playerMaxWeight: ' .. xPlayer.getMaxWeight())
+                    print('DEBUG playerMaxWeight:', players, xPlayer.getMaxWeight())
                 end
             end
 
@@ -43,8 +40,8 @@ ESX.RegisterUsableItem('bag', function(source)
         xPlayer.addInventoryItem("nobag", 1)
 
         if Config.BagInventory:match('expand') then
-            debug('playerMaxWeight before add bag: ' .. xPlayer.getMaxWeight())
-            isSetMaxWeight = true
+            debug('playerMaxWeight before add bag:', xPlayer.source, xPlayer.getMaxWeight())
+            setPlayerBag(xPlayer, ESX.GetConfig().MaxWeight + Config.BagWeight)
         end
 
         TriggerClientEvent('esx:showNotification', source, _U('used_bag'))
@@ -61,7 +58,7 @@ ESX.RegisterUsableItem('nobag', function(source)
     if Config.ItemsInBag then
         if Config.BagInventory:match('expand') then
             local playerWeight = xPlayer.getWeight()
-            debug('playerWeight: ' .. playerWeight)
+            debug('NOBAG playerWeight:', xPlayer.source, playerWeight)
 
             if playerWeight > ESX.GetConfig().MaxWeight then
                 TriggerClientEvent('esx:showNotification', source, _U('itemsInBag'))
@@ -72,8 +69,8 @@ ESX.RegisterUsableItem('nobag', function(source)
                     xPlayer.addInventoryItem("bag", 1)
             
                     if Config.BagInventory:match('expand') then
-                        debug('playerMaxWeight before remove bag: ' .. xPlayer.getMaxWeight())
-                        isSetMaxWeight = false
+                        debug('playerMaxWeight before remove bag:', xPlayer.source, xPlayer.getMaxWeight())
+                        setPlayerBag(xPlayer, ESX.GetConfig().MaxWeight)
                     end
                     
                     TriggerClientEvent('esx:showNotification', source, _U('used_nobag'))
@@ -105,8 +102,8 @@ ESX.RegisterUsableItem('nobag', function(source)
             xPlayer.addInventoryItem("bag", 1)
     
             if Config.BagInventory:match('expand') then
-                debug('playerMaxWeight before remove bag: ' .. xPlayer.getMaxWeight())
-                isSetMaxWeight = false
+                debug('playerMaxWeight before remove bag:', xPlayer.source, xPlayer.getMaxWeight())
+                setPlayerBag(xPlayer, ESX.GetConfig().MaxWeight)
             end
             
             TriggerClientEvent('esx:showNotification', source, _U('used_nobag'))
@@ -116,25 +113,25 @@ ESX.RegisterUsableItem('nobag', function(source)
     end
 end)
 
-Citizen.CreateThread(function()
-    while true do
-        for k,players in pairs(GetPlayers()) do
-            local xPlayer = ESX.GetPlayerFromId(players)
-
-            if (xPlayer ~= nil) then
-                if (not isSet and isSetMaxWeight) then
+function setPlayerBag(xPlayer, weight)
+    if xPlayer then
+        if weight > ESX.GetConfig().MaxWeight then
+            CreateThread(function()
+                while true do
+                    Wait(0)
                     xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight + Config.BagWeight)
-                    isSet = true
-                elseif (isSet and not isSetMaxWeight) then
-                    isSet = false
+                end
+            end)
+        elseif weight == ESX.GetConfig().MaxWeight then
+            CreateThread(function()
+                while true do
+                    Wait(0)
                     xPlayer.setMaxWeight(ESX.GetConfig().MaxWeight)
                 end
-            end
+            end)
         end
-
-        Citizen.Wait(1000)
     end
-end)
+end
 
 function itemsInBag(xPlayer)
     local result = MySQL.Sync.fetchAll("SELECT * FROM inventories WHERE identifier = @identifier AND type = @type", { 
@@ -160,9 +157,15 @@ function itemsInBag(xPlayer)
     end
 end
 
-function debug(msg)
+function debug(msg, msg2, msg3)
 	if Config.Debug then
-		print(msg)
+        if msg3 then
+            print(msg, msg2, msg3)
+        elseif not msg3 and msg2 then
+            print(msg, msg2)
+        else
+		    print(msg)
+        end
 	end
 end
 
