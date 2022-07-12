@@ -13,7 +13,7 @@ Config.Bags = {
 Config.ItemsInBag = true -- Set true if you want that players cant use 'nobag' Item if there are Items in the Bag
 ----------------------------------------------------------------
 -- !!! Change this to the same value in config.lua of Chezza Inventory !!!
--- Erweitern Sie den Inventarbereich des Player // Secondary Inventory, indem Sie /openbag Command eingeben
+-- Expand the Inventory Space of the Player // Secondary Inventory by typing /openbag Command
 Config.BagInventory = 'expand' -- 'expand' or 'secondary'
 Config.BagWeight = 60 -- Set the Value what added to the Inventory Space if Config.BagInventory = 'expand'
 ----------------------------------------------------------------
