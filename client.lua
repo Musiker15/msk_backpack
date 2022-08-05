@@ -6,131 +6,210 @@ Citizen.CreateThread(function()
 	end
 end)
 
+local currentBag = nil
+local currentBagWeight = nil
+
 RegisterNetEvent('esx:playerLoaded')
-AddEventHandler('esx:playerLoaded', function(playerData)
-    local playerPed = PlayerPedId()
-    local xPlayer = ESX.IsPlayerLoaded(playerPed)
+AddEventHandler('esx:playerLoaded', function(xPlayer)
+    ESX.PlayerData = xPlayer
 
     Citizen.Wait(1000) -- Please Do Not Touch!
     
-    if xPlayer then
+    if ESX.IsPlayerLoaded() then
         if Config.BagInventory:match('expand') then
             ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
-                if skin.sex == 0 then -- Male
-                    if skin.bags_1 == Config.Bags.male.bagID_1 then -- Bag Skin
-                        TriggerServerEvent('esx_bag:delBackpack')
-                    end
-                else -- Female
-                    if skin.bags_1 == Config.Bags.female.bagID_1 then -- Bag Skin
-                        TriggerServerEvent('esx_bag:delBackpack')
+                for k, v in pairs(Config.Backpacks) do
+                    if skin.sex == 0 then -- Male
+                        if skin.bags_1 == v.skin.male.skin1 then -- Bag Skin
+                            TriggerServerEvent('msk_backpack:setJoinBag', k, v.weight)
+                            debug(skin.bags_1, v.skin.male.skin1, v.weight)
+                            currentBag = k
+                            currentBagWeight = v.weight
+                        end
+                    else -- Female
+                        if skin.bags_1 == v.skin.female.skin1 then -- Bag Skin
+                            TriggerServerEvent('msk_backpack:setJoinBag', k, v.weight)
+                            debug(skin.bags_1, v.skin.female.skin1, v.weight)
+                            currentBag = k
+                            currentBagWeight = v.weight
+                        end
                     end
                 end
             end)
         end
     else
-        debug('xPlayer not found')
+        debug('xPlayer not found on Event: playerLoaded')
     end
 end)
 
-RegisterNetEvent('esx_bag:setBag')
-AddEventHandler('esx_bag:setBag', function(id)
+RegisterNetEvent('msk_backpack:setBackpack')
+AddEventHandler('msk_backpack:setBackpack', function(itemname, item)
+    debug('itemname:', itemname)
+    currentBag = itemname
+    currentBagWeight = item.weight
+
     ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
         if skin.sex == 0 then -- Male
-            if skin.bags_1 ~= Config.Bags.male.bagID_1 then -- Bag Skin
-                TriggerEvent('skinchanger:change', "bags_1", Config.Bags.male.bagID_1)
-                TriggerEvent('skinchanger:change', "bags_2", Config.Bags.male.bagID_2)
-                TriggerEvent('skinchanger:getSkin', function(skin)
-                    TriggerServerEvent('esx_skin:save', skin)
-                end)
-            end
+            TriggerEvent('skinchanger:change', "bags_1", item.skin.male.skin1)
+            TriggerEvent('skinchanger:change', "bags_2", item.skin.male.skin2)
+            TriggerEvent('skinchanger:getSkin', function(skin)
+                TriggerServerEvent('esx_skin:save', skin)
+            end)
         else -- Female
-            if skin.bags_1 ~= Config.Bags.female.bagID_1 then -- Bag Skin
-                TriggerEvent('skinchanger:change', "bags_1", Config.Bags.female.bagID_1)
-                TriggerEvent('skinchanger:change', "bags_2", Config.Bags.female.bagID_2)
-                TriggerEvent('skinchanger:getSkin', function(skin)
-                    TriggerServerEvent('esx_skin:save', skin)
-                end)
-            end
+            TriggerEvent('skinchanger:change', "bags_1", item.skin.female.skin1)
+            TriggerEvent('skinchanger:change', "bags_2", item.skin.female.skin2)
+            TriggerEvent('skinchanger:getSkin', function(skin)
+                TriggerServerEvent('esx_skin:save', skin)
+            end)
         end
     end)
 end)
 
-RegisterNetEvent('esx_bag:setdelBag')
-AddEventHandler('esx_bag:setdelBag', function(id)
+RegisterNetEvent('msk_backpack:delBackpack')
+AddEventHandler('msk_backpack:delBackpack', function()
+    debug('Trigger Event delBackpack')
+    currentBag = nil
+    currentBagWeight = nil
+
     ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
         if Config.useParachute then
-            if skin.sex == 0 then -- Male
-                if skin.bags_1 ~= 63 then -- Parachute Skin - esx_parachute by me :)
-                    TriggerEvent('skinchanger:change', "bags_1", 0)
-                    TriggerEvent('skinchanger:change', "bags_2", 0)
-                    TriggerEvent('skinchanger:getSkin', function(skin)
-                        TriggerServerEvent('esx_skin:save', skin)
-                    end)
-                end
-            else -- Female
-                if skin.bags_1 ~= 63 then -- Parachute Skin - esx_parachute by me :)
-                    TriggerEvent('skinchanger:change', "bags_1", 0)
-                    TriggerEvent('skinchanger:change', "bags_2", 0)
-                    TriggerEvent('skinchanger:getSkin', function(skin)
-                        TriggerServerEvent('esx_skin:save', skin)
-                    end)
-                end
+            if skin.bags_1 ~= 63 then -- Parachute Skin - esx_parachute by me :)
+                TriggerEvent('skinchanger:change', "bags_1", 0)
+                TriggerEvent('skinchanger:change', "bags_2", 0)
+                TriggerEvent('skinchanger:getSkin', function(skin)
+                    TriggerServerEvent('esx_skin:save', skin)
+                end)
+                debug('Set Backpack to 0')
             end
         else
-            if skin.sex == 0 then -- Male
-                if skin.bags_1 == Config.Bags.male.bagID_1 then
-                    TriggerEvent('skinchanger:change', "bags_1", 0)
-                    TriggerEvent('skinchanger:change', "bags_2", 0)
-                    TriggerEvent('skinchanger:getSkin', function(skin)
-                        TriggerServerEvent('esx_skin:save', skin)
-                    end)
-                end
-            else -- Female
-                if skin.bags_1 == Config.Bags.female.bagID_1 then
-                    TriggerEvent('skinchanger:change', "bags_1", 0)
-                    TriggerEvent('skinchanger:change', "bags_2", 0)
-                    TriggerEvent('skinchanger:getSkin', function(skin)
-                        TriggerServerEvent('esx_skin:save', skin)
-                    end)
-                end
-            end
+            TriggerEvent('skinchanger:change', "bags_1", 0)
+            TriggerEvent('skinchanger:change', "bags_2", 0)
+            TriggerEvent('skinchanger:getSkin', function(skin)
+                TriggerServerEvent('esx_skin:save', skin)
+            end)
+            debug('Set Backpack to 0')
         end
     end)
 end)
 
-if Config.CarryLongWeapon then
-    Citizen.CreateThread(function()
-        while true do
-            Citizen.Wait(0)
-            local playerPed = PlayerPedId()
-	        local hash = GetSelectedPedWeapon(playerPed)
+if Config.BagInventory:match('secondary') then
+    RegisterCommand('openbag', function()
+        local hasBackpack = false
 
-            if CheckWeapon(hash) then
-                ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
-                    for k,v in pairs(Config.WeaponBags) do
-                        if skin.bags_1 == 0 then
-                            SetCurrentPedWeapon(playerPed, GetHashKey("WEAPON_UNARMED"), true)
-                            ESX.ShowNotification(_U('noBag'))
-                        elseif skin.bags_1 ~= v then
-                            SetCurrentPedWeapon(playerPed, GetHashKey("WEAPON_UNARMED"), true)
-                            ESX.ShowNotification(_U('otherBag'))
-                        else
-                            debug('Has Bag and got weapon')
+        ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
+            if not IsPlayerDead(PlayerId()) then
+                for k, v in pairs(Config.Backpacks) do
+                    if skin.sex == 0 then -- Male
+                        if skin.bags_1 == v.skin.male.skin1 then -- Bag Skin
+                            hasBackpack = true
+                        end
+                    else -- Female
+                        if skin.bags_1 == v.skin.female.skin1 then -- Bag Skin
+                            hasBackpack = true
                         end
                     end
-                end)
+                end
+
+                if hasBackpack then
+                    ESX.TriggerServerCallback('inventory:getUserData', function(name, identifier)
+                        TriggerEvent('inventory:openInventory', {
+                            type = currentBag,
+                            id = identifier,
+                            title = '🎒 '.. name,
+                            weight = currentBagWeight,
+                            delay = 150,
+                            save = true
+                        })
+                    end)
+                else
+                    ESX.ShowNotification('Du benötigst eine Tasche dafür!')
+                end
+            else
+                ESX.ShowNotification('Du bist Tot also wieso öffnest du deine Tasche?')
             end
-        end
+        end)
     end)
 
-    function CheckWeapon(hash)
-        for k,v in pairs(Config.Weapons) do
-            if GetHashKey(v) == hash then
-                return true
+    RegisterCommand('stealbag', function()
+        local player, playerDistance = ESX.Game.GetClosestPlayer()
+    
+        if player ~= -1 and playerDistance <= 3.0 then
+            local playerPed = GetPlayerPed(player)
+            local hasBackpack = false
+                    
+            if DoesEntityExist(playerPed) then
+                ESX.TriggerServerCallback('msk_backpack:getPlayerSkin', function(skin)
+                    for k, v in pairs(Config.Backpacks) do
+                        if skin.sex == 0 then -- Male
+                            if skin.bags_1 == v.skin.male.skin1 then -- Bag Skin
+                                hasBackpack = true
+                            end
+                        else -- Female
+                            if skin.bags_1 == v.skin.female.skin1 then -- Bag Skin
+                                hasBackpack = true
+                            end
+                        end
+                    end
+
+                    if hasBackpack then
+                        ESX.TriggerServerCallback('msk_backpack:getTargetData', function(name, identifier)
+                            if IsEntityDead(playerPed) then
+                                TriggerServerEvent('msk_backpack:updateStealInventoryBag', GetPlayerServerId(PlayerId()), GetPlayerServerId(player))
+                                    
+                                TriggerEvent('inventory:openInventory', {
+                                    type = currentBag,
+                                    id = identifier,
+                                    title = '🎒 '.. name,
+                                    weight = currentBagWeight,
+                                    delay = 150,
+                                })
+        
+                                LoadAnimDict("random@mugging5", function()
+                                    TaskPlayAnim(PlayerPedId(), "random@mugging5", "ig_1_guy_handoff", 8.0, 8.0, -1, 50, 0, false, false, false)
+                                    Wait(2000)
+                                    ClearPedTasks(PlayerPedId())
+                                end) 
+                            else 
+                                if IsEntityPlayingAnim(playerPed, "missminuteman_1ig_2", "handsup_enter", 3) then
+                                    TriggerServerEvent('msk_backpack:updateStealInventoryBag', GetPlayerServerId(PlayerId()), GetPlayerServerId(player))
+                                        
+                                    TriggerEvent('inventory:openInventory', {
+                                        type = currentBag,
+                                        id = identifier,
+                                        title = '🎒 '.. name,
+                                        weight = currentBagWeight,
+                                        delay = 150,
+                                    })
+        
+                                    LoadAnimDict("random@mugging5", function()
+                                        TaskPlayAnim(PlayerPedId(), "random@mugging5", "ig_1_guy_handoff", 8.0, 8.0, -1, 50, 0, false, false, false)
+                                        Wait(2000)
+                                        ClearPedTasks(PlayerPedId())
+                                    end) 
+                                else 
+                                    ESX.ShowNotification('Spieler hat sich noch nicht ergeben.')
+                                end 
+                            end
+                        end, GetPlayerServerId(player))
+                    else
+                        ESX.ShowNotification('Der Spieler hat keine Tasche!')
+                    end
+                end, GetPlayerServerId(player))
+    
+                while true do 
+                    Wait(1)
+                    player, playerDistance = ESX.Game.GetClosestPlayer()
+    
+                    if playerDistance > 3.0 then 
+                        TriggerEvent('inventory:close')
+                        break
+                    end
+                end
             end
+        else 
+            ESX.ShowNotification('Keine Spieler gefunden!')
         end
-        return false
-    end
+    end)
 end
 
 function debug(msg, msg2, msg3)

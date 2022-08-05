@@ -2,31 +2,29 @@ Config = {}
 ----------------------------------------------------------------
 Config.Locale = 'de'
 Config.VersionChecker = true
-Config.Debug = false
+Config.Debug = true
 ----------------------------------------------------------------
--- If you use the Plugin for Chezza Inventory, make sure this is the same ID
--- as in Config.Bags = {82} in the config.lua from chezza inventory
-Config.Bags = {
-    male = {bagID_1 = 82, bagID_2 = 0},
-    female = {bagID_1 = 82, bagID_2 = 0}
-}
 Config.ItemsInBag = true -- Set true if you want that players cant use 'nobag' Item if there are Items in the Bag
-----------------------------------------------------------------
--- !!! Change this to the same value in config.lua of Chezza Inventory !!!
--- Expand the Inventory Space of the Player // Secondary Inventory by typing /openbag Command
+
+-- Expand the Inventory Space of the Player // Opens a Secondary Inventory by typing /openbag Command
 Config.BagInventory = 'expand' -- 'expand' or 'secondary'
-Config.BagWeight = 60 -- Set the Value what added to the Inventory Space if Config.BagInventory = 'expand'
-----------------------------------------------------------------
+
 -- If set to true go to client.lua and change the IDs to what you set in esx_parachute
 Config.useParachute = true -- Set true if you use my esx_parchute Script
 ----------------------------------------------------------------
--- Experimental // Can cause performance problems
-Config.CarryLongWeapon = false -- Set 'true' if you want that Players can only carry a Weapon if they have a Bag
-Config.WeaponBags = {82} -- Backpack IDs // {ID, ID, ID} | Only for 'Config.CarryLongWeapon' function!!
-Config.Weapons = {
-    'WEAPON_CARBINERIFLE',
-    'WEAPON_GUSENBERG',
-    'WEAPON_PUMPSHOTGUN',
-    'WEAPON_ADVANCEDRIFLE',
-    'WEAPON_ASSAULTRIFLE',
+Config.Backpacks = {
+    ['bag'] = { -- Item // Add this to your database
+        skin = {
+            male = {skin1 = 82, skin2 = 0},
+            female = {skin1 = 82, skin2 = 0}
+        },
+        weight = 60,
+    },
+    ['bag2'] = { -- Item // Add this to your database
+        skin = {
+            male = {skin1 = 81, skin2 = 0},
+            female = {skin1 = 81, skin2 = 0}
+        },
+        weight = 40,
+    },
 }
