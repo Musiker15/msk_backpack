@@ -111,7 +111,7 @@ if Config.BagInventory:match('secondary') then
                 end
 
                 if hasBackpack then
-                    ESX.TriggerServerCallback('inventory:getUserData', function(name, identifier)
+                    ESX.TriggerServerCallback('msk_backpack:getUserData', function(name, identifier)
                         TriggerEvent('inventory:openInventory', {
                             type = currentBag,
                             id = identifier,
