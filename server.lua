@@ -1,21 +1,19 @@
 local ESX = nil
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 
-local currentBag = nil
-local setDebug = false
+local currentBag, setDebug = nil, false
 
 if Config.Debug and Config.BagInventory:match('expand') then
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while true do
             for k,players in pairs(GetPlayers()) do
                 local xPlayer = ESX.GetPlayerFromId(players)
 
                 if xPlayer and setDebug then
-                    print('DEBUG playerMaxWeight:', players, xPlayer.getMaxWeight())
+                    debug('DEBUG playerMaxWeight: ', players, xPlayer.getMaxWeight())
                 end
             end
-
-            Citizen.Wait(5000)
+            Wait(5000)
         end
     end)
 end
@@ -181,8 +179,8 @@ AddEventHandler('msk_backpack:updateStealInventoryBag', function(source, target)
     local xPlayer = ESX.GetPlayerFromId(source)
     local tPlayer = ESX.GetPlayerFromId(target)
 
-    tPlayer.showNotification(''..xPlayer.getName(source)..' durchsucht deine Tasche')
-    xPlayer.showNotification('Du durchsuchst die Tasche von: '..tPlayer.getName(target)..'')
+    tPlayer.showNotification(xPlayer.getName(source)..' is searching your bag.')
+    xPlayer.showNotification('You are searching: '..tPlayer.getName(target))
 end)
 
 -- Callbacks -- 
@@ -235,7 +233,7 @@ end
 
 ---- GitHub Updater ----
 function GetCurrentVersion()
-	return GetResourceMetadata( GetCurrentResourceName(), "version" )
+	return GetResourceMetadata(GetCurrentResourceName(), "version")
 end
 
 local CurrentVersion = GetCurrentVersion()

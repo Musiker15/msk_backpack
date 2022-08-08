@@ -1,19 +1,25 @@
-ESX = nil
-Citizen.CreateThread(function()
-	while ESX == nil do
-		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-		Citizen.Wait(0)
-	end
+ESX, PlayerData = nil, {}
+
+CreateThread(function()
+	while ESX == nil do 
+        TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+        Wait(250)
+    end
+    ----------------------------------------------------------
+	while ESX.GetPlayerData().job == nil do
+        Wait(250)
+    end
+	PlayerData = ESX.GetPlayerData()
 end)
 
-local currentBag = nil
-local currentBagWeight = nil
+
+local currentBag, currentBagWeight = nil, nil
 
 RegisterNetEvent('esx:playerLoaded')
 AddEventHandler('esx:playerLoaded', function(xPlayer)
-    ESX.PlayerData = xPlayer
+    PlayerData = xPlayer
 
-    Citizen.Wait(1000) -- Please Do Not Touch!
+    Wait(1000) -- Please Do Not Touch!
     
     if ESX.IsPlayerLoaded() then
         if Config.BagInventory:match('expand') then
@@ -52,7 +58,7 @@ AddEventHandler('msk_backpack:setBackpack', function(itemname, item)
 		TaskPlayAnim(playerPed, Config.Animations.dict, Config.Animations.anim, 8.0, 1.0, -1, 49, 0, false, false, false)
 		RemoveAnimDict(Config.Animations.dict)
 	end)
-	Citizen.Wait(Config.Animations.time * 1000)
+	Wait(Config.Animations.time * 1000)
 	ClearPedTasks(playerPed)
 
     ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
@@ -82,7 +88,8 @@ AddEventHandler('msk_backpack:delBackpack', function()
 		TaskPlayAnim(playerPed, Config.Animations.dict, Config.Animations.anim, 8.0, 1.0, -1, 49, 0, false, false, false)
 		RemoveAnimDict(Config.Animations.dict)
 	end)
-	Citizen.Wait(Config.Animations.time * 1000)
+
+	Wait(Config.Animations.time * 1000)
 	ClearPedTasks(playerPed)
 
     ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
@@ -136,10 +143,10 @@ if Config.BagInventory:match('secondary') then
                         })
                     end)
                 else
-                    ESX.ShowNotification('Du benötigst eine Tasche dafür!')
+                    ESX.ShowNotification('You need a backpack for that!')
                 end
             else
-                ESX.ShowNotification('Du bist Tot also wieso öffnest du deine Tasche?')
+                ESX.ShowNotification('You need to be alive to do that!')
             end
         end)
     end)
@@ -201,12 +208,12 @@ if Config.BagInventory:match('secondary') then
                                         ClearPedTasks(PlayerPedId())
                                     end) 
                                 else 
-                                    ESX.ShowNotification('Spieler hat sich noch nicht ergeben.')
+                                    ESX.ShowNotification('The player did not surrender yet.')
                                 end 
                             end
                         end, GetPlayerServerId(player))
                     else
-                        ESX.ShowNotification('Der Spieler hat keine Tasche!')
+                        ESX.ShowNotification('That player does not have a backpack!')
                     end
                 end, GetPlayerServerId(player))
     
@@ -221,7 +228,7 @@ if Config.BagInventory:match('secondary') then
                 end
             end
         else 
-            ESX.ShowNotification('Keine Spieler gefunden!')
+            ESX.ShowNotification('No one nearby!')
         end
     end)
 end
