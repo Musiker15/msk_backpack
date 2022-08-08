@@ -48,6 +48,13 @@ AddEventHandler('msk_backpack:setBackpack', function(itemname, item)
     currentBag = itemname
     currentBagWeight = item.weight
 
+    ESX.Streaming.RequestAnimDict(Config.Animations.dict, function()
+		TaskPlayAnim(playerPed, Config.Animations.dict, Config.Animations.anim, 8.0, 1.0, -1, 49, 0, false, false, false)
+		RemoveAnimDict(Config.Animations.dict)
+	end)
+	Citizen.Wait(Config.Animations.time * 1000)
+	ClearPedTasks(playerPed)
+
     ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
         if skin.sex == 0 then -- Male
             TriggerEvent('skinchanger:change', "bags_1", item.skin.male.skin1)
@@ -70,6 +77,13 @@ AddEventHandler('msk_backpack:delBackpack', function()
     debug('Trigger Event delBackpack')
     currentBag = nil
     currentBagWeight = nil
+
+    ESX.Streaming.RequestAnimDict(Config.Animations.dict, function()
+		TaskPlayAnim(playerPed, Config.Animations.dict, Config.Animations.anim, 8.0, 1.0, -1, 49, 0, false, false, false)
+		RemoveAnimDict(Config.Animations.dict)
+	end)
+	Citizen.Wait(Config.Animations.time * 1000)
+	ClearPedTasks(playerPed)
 
     ESX.TriggerServerCallback('esx_skin:getPlayerSkin', function(skin)
         if Config.useParachute then

@@ -11,6 +11,12 @@ Config.BagInventory = 'expand' -- 'expand' or 'secondary'
 
 -- If set to true go to client.lua and change the IDs to what you set in esx_parachute
 Config.useParachute = true -- Set true if you use my esx_parchute Script
+
+Config.Animations = {
+    dict = 'clothingtie',
+    anim = 'try_tie_neutral_a',
+    time = 2 -- in seconds (default: 2 seconds)
+}
 ----------------------------------------------------------------
 Config.Backpacks = {
     ['bag'] = { -- Item // Add this to your database
