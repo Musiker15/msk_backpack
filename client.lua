@@ -44,6 +44,7 @@ end)
 RegisterNetEvent('msk_backpack:setBackpack')
 AddEventHandler('msk_backpack:setBackpack', function(itemname, item)
     debug('itemname:', itemname)
+    local playerPed = PlayerPedId()
     currentBag = itemname
     currentBagWeight = item.weight
 
@@ -69,11 +70,14 @@ AddEventHandler('msk_backpack:setBackpack', function(itemname, item)
             end)
         end
     end)
+
+    ESX.ShowNotification(_U('used_bag'))
 end)
 
 RegisterNetEvent('msk_backpack:delBackpack')
 AddEventHandler('msk_backpack:delBackpack', function()
     debug('Trigger Event delBackpack')
+    local playerPed = PlayerPedId()
     currentBag = nil
     currentBagWeight = nil
 
@@ -103,6 +107,25 @@ AddEventHandler('msk_backpack:delBackpack', function()
             debug('Set Backpack to 0')
         end
     end)
+
+    ESX.ShowNotification(_U('used_nobag'))
+end)
+
+RegisterNetEvent('msk_backpack:delBackpackDeath')
+AddEventHandler('msk_backpack:delBackpackDeath', function()
+    debug('Trigger Event delBackpack after Death')
+    local playerPed = PlayerPedId()
+    currentBag = nil
+    currentBagWeight = nil
+
+    TriggerEvent('skinchanger:change', "bags_1", 0)
+    TriggerEvent('skinchanger:change', "bags_2", 0)
+    TriggerEvent('skinchanger:getSkin', function(skin)
+        TriggerServerEvent('esx_skin:save', skin)
+    end)
+    debug('Set Backpack to 0')
+
+    TriggerEvent("inventory:refresh") -- Chezza Inventory
 end)
 
 if Config.BagInventory:match('secondary') then
