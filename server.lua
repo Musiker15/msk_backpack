@@ -217,7 +217,7 @@ end)
 ESX.RegisterServerCallback('msk_backpack:getPlayerSkin', function(source, cb, player)
 	local xPlayer = ESX.GetPlayerFromId(player)
 
-	MySQL.query('SELECT skin FROM users WHERE identifier = @identifier', {
+	MySQL.Async.fetchAll('SELECT skin FROM users WHERE identifier = @identifier', {
 		['@identifier'] = xPlayer.identifier
 	}, function(users)
 		local user, skin = users[1]
