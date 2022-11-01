@@ -4,7 +4,7 @@ games { 'gta5' }
 author 'Musiker15 - MSK Scripts'
 name 'msk_backpack'
 description 'Multiple Backpack Items'
-version '3.3'
+version '3.4'
 
 shared_scripts {
 	'@es_extended/locale.lua',
@@ -17,10 +17,11 @@ client_scripts {
 }
 
 server_scripts {
-	'@mysql-async/lib/MySQL.lua',
+	'@oxmysql/lib/MySQL.lua',
 	'server.lua'
 }
 
 dependencies {
-	'es_extended'
+	'es_extended',
+	'oxmysql'
 }

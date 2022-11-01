@@ -1,7 +1,16 @@
 ESX = exports["es_extended"]:getSharedObject()
 
-local setDebug = false
+AddEventHandler('onResourceStart', function(resource)
+	if resource == GetCurrentResourceName() then
+        local createTable = MySQL.query.await("CREATE TABLE IF NOT EXISTS msk_backpack (`identifier` varchar(80) NOT NULL, `bag` longtext DEFAULT NULL, PRIMARY KEY (`identifier`));")
 
+		if createTable.warningStatus < 1 then
+			print('^2 Successfully ^3 created ^2 table ^3 msk_backpack ^0')
+		end
+    end
+end)
+
+local setDebug = false
 if Config.Debug and Config.BagInventory:match('expand') then
     CreateThread(function()
         while true do
@@ -20,7 +29,8 @@ end
 
 RegisterServerEvent('msk_backpack:setJoinBag')
 AddEventHandler('msk_backpack:setJoinBag', function(itemname, weight)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local src = source
+    local xPlayer = ESX.GetPlayerFromId(src)
 
     debug('Item:', itemname, weight)
     setPlayerBag(xPlayer, ESX.GetConfig().MaxWeight + weight)
@@ -28,43 +38,42 @@ end)
 
 RegisterServerEvent('msk_backpack:setDeathStatus')
 AddEventHandler('msk_backpack:setDeathStatus', function(isDead)
-    local xPlayer = ESX.GetPlayerFromId(source)
+    local src = source
+    local xPlayer = ESX.GetPlayerFromId(src)
 
     if isDead then
         debug('Player is dead, reset InvSpace and Backpack')
-        TriggerClientEvent('msk_backpack:delBackpackDeath', source)
-
         if Config.BagInventory:match('expand') then
             setPlayerBag(xPlayer, ESX.GetConfig().MaxWeight)
         elseif Config.BagInventory:match('secondary') then
-            local currentBag = MySQL.Sync.fetchAll('SELECT * FROM msk_backpack WHERE identifier = @identifier', { 
+            local currentBag = MySQL.query.await('SELECT * FROM msk_backpack WHERE identifier = @identifier', { 
                 ["@identifier"] = xPlayer.identifier
             })
 
-            MySQL.Sync.execute("UPDATE msk_backpack SET bag = @bag WHERE identifier = @identifier", {
-                ["@identifier"] = xPlayer.identifier,
-                ["@bag"] = NULL
+            MySQL.query.await('DELETE FROM msk_backpack WHERE identifier = @identifier', { 
+                ['@identifier'] = xPlayer.identifier
             })
-            MySQL.Sync.execute('UPDATE inventories SET data = @data WHERE type = @type AND identifier = @identifier', { 
+            MySQL.update.await('UPDATE inventories SET data = @data WHERE type = @type AND identifier = @identifier', { 
                 ['@identifier'] = xPlayer.identifier,
                 ['@type'] = currentBag[1].bag,
                 ['@data'] = '[]',
             })
         end
-
+        xPlayer.triggerEvent('msk_backpack:delBackpackDeath')
     end
 end)
 
 for kbag, vbag in pairs(Config.Backpacks) do
     ESX.RegisterUsableItem(kbag, function(source)
-        local xPlayer = ESX.GetPlayerFromId(source)
+        local src = source
+        local xPlayer = ESX.GetPlayerFromId(src)
 
         if Config.BagInventory:match('expand') then
             debug('playerMaxWeight before add bag:', xPlayer.source, xPlayer.getMaxWeight())
             setPlayerBag(xPlayer, ESX.GetConfig().MaxWeight + vbag.weight)
         end
 
-        MySQL.Async.fetchAll('SELECT bag FROM msk_backpack WHERE identifier = @identifier', { 
+        MySQL.query('SELECT bag FROM msk_backpack WHERE identifier = @identifier', { 
             ["@identifier"] = xPlayer.identifier
         }, function(result)
             if result[1] and result[1].bag then
@@ -72,13 +81,13 @@ for kbag, vbag in pairs(Config.Backpacks) do
                 return
             elseif not result[1] then
                 debug('Add Bag into Database', xPlayer.identifier, kbag)
-                MySQL.Async.execute('INSERT INTO msk_backpack (identifier, bag) VALUES (@identifier, @bag)', {
+                MySQL.query('INSERT INTO msk_backpack (identifier, bag) VALUES (@identifier, @bag)', {
                     ['@identifier'] = xPlayer.identifier,
                     ['@bag'] = kbag,
                 })
             elseif result[1] and not result[1].bag then
                 debug('Add Bag into Database', xPlayer.identifier, kbag)
-                MySQL.Async.execute("UPDATE msk_backpack SET bag = @bag WHERE identifier = @identifier", {
+                MySQL.update("UPDATE msk_backpack SET bag = @bag WHERE identifier = @identifier", {
                     ["@identifier"] = xPlayer.identifier,
                     ["@bag"] = kbag
                 })
@@ -86,15 +95,16 @@ for kbag, vbag in pairs(Config.Backpacks) do
 
             xPlayer.removeInventoryItem(kbag, 1)
             xPlayer.addInventoryItem('nobag', 1)
-            TriggerClientEvent('msk_backpack:setBackpack', source, kbag, vbag)
+            TriggerClientEvent('msk_backpack:setBackpack', src, kbag, vbag)
         end)
     end)
 end
 
 -- No Bag
 ESX.RegisterUsableItem('nobag', function(source)
-	local xPlayer = ESX.GetPlayerFromId(source)
-    local currentBag = MySQL.Sync.fetchAll('SELECT * FROM msk_backpack WHERE identifier = @identifier', { 
+    local src = source
+	local xPlayer = ESX.GetPlayerFromId(src)
+    local currentBag = MySQL.query.await('SELECT * FROM msk_backpack WHERE identifier = @identifier', { 
         ["@identifier"] = xPlayer.identifier
     })
 
@@ -106,7 +116,7 @@ ESX.RegisterUsableItem('nobag', function(source)
             if playerWeight > ESX.GetConfig().MaxWeight then
                 xPlayer.showNotification(_U('itemsInBag'))
             else
-                TriggerClientEvent('msk_backpack:delBackpack', source)
+                TriggerClientEvent('msk_backpack:delBackpack', src)
                 xPlayer.removeInventoryItem('nobag', 1)
                 xPlayer.addInventoryItem(currentBag[1].bag, 1)
             
@@ -115,22 +125,20 @@ ESX.RegisterUsableItem('nobag', function(source)
                     setPlayerBag(xPlayer, ESX.GetConfig().MaxWeight)
                 end
 
-                MySQL.Async.execute("UPDATE msk_backpack SET bag = @bag WHERE identifier = @identifier", {
-                    ["@identifier"] = xPlayer.identifier,
-                    ["@bag"] = NULL
+                MySQL.query.await('DELETE FROM msk_backpack WHERE identifier = @identifier', { 
+                    ['@identifier'] = xPlayer.identifier
                 })
             end
         else
             if itemsInBag(xPlayer, currentBag[1].bag) then
                 debug('Trigger Event itemsInBag(xPlayer)')
                 
-                TriggerClientEvent('msk_backpack:delBackpack', source)
+                TriggerClientEvent('msk_backpack:delBackpack', src)
                 xPlayer.removeInventoryItem('nobag', 1)
                 xPlayer.addInventoryItem(currentBag[1].bag, 1)
 
-                MySQL.Async.execute("UPDATE msk_backpack SET bag = @bag WHERE identifier = @identifier", {
-                    ["@identifier"] = xPlayer.identifier,
-                    ["@bag"] = NULL
+                MySQL.query.await('DELETE FROM msk_backpack WHERE identifier = @identifier', { 
+                    ['@identifier'] = xPlayer.identifier
                 })
             else
                 debug('Trigger Notification itemsInBag')
@@ -138,7 +146,7 @@ ESX.RegisterUsableItem('nobag', function(source)
             end
         end
     else
-        TriggerClientEvent('msk_backpack:delBackpack', source)
+        TriggerClientEvent('msk_backpack:delBackpack', src)
         xPlayer.removeInventoryItem('nobag', 1)
         xPlayer.addInventoryItem(currentBag[1].bag, 1)
     
@@ -147,11 +155,38 @@ ESX.RegisterUsableItem('nobag', function(source)
             setPlayerBag(xPlayer, ESX.GetConfig().MaxWeight)
         end
         
-        MySQL.Async.execute("UPDATE msk_backpack SET bag = @bag WHERE identifier = @identifier", {
+        MySQL.update("UPDATE msk_backpack SET bag = @bag WHERE identifier = @identifier", {
             ["@identifier"] = xPlayer.identifier,
             ["@bag"] = NULL
         })
     end
+end)
+
+RegisterServerEvent('msk_backpack:save')
+AddEventHandler('msk_backpack:save', function(skin)
+    local src = source
+	local xPlayer = ESX.GetPlayerFromId(src)
+
+	MySQL.update('UPDATE users SET skin = @skin WHERE identifier = @identifier', {
+		['@skin'] = json.encode(skin),
+		['@identifier'] = xPlayer.identifier
+	})
+end)
+
+ESX.RegisterServerCallback('msk_backpack:getPlayerSkin', function(source, cb, playerId)
+	local xPlayer = ESX.GetPlayerFromId(playerId)
+
+	MySQL.query('SELECT skin FROM users WHERE identifier = @identifier', {
+		['@identifier'] = xPlayer.identifier
+	}, function(users)
+		local user, skin = users[1]
+
+		if user.skin then
+			skin = json.decode(user.skin)
+		end
+
+		cb(skin)
+	end)
 end)
 
 function setPlayerBag(xPlayer, weight)
@@ -167,7 +202,7 @@ function setPlayerBag(xPlayer, weight)
 end
 
 function itemsInBag(xPlayer, currentBag)
-    local result = MySQL.Sync.fetchAll("SELECT * FROM inventories WHERE identifier = @identifier AND type = @type", { 
+    local result = MySQL.query.await("SELECT * FROM inventories WHERE identifier = @identifier AND type = @type", { 
         ['@identifier'] = xPlayer.identifier,
         ['@type'] = currentBag
     })
@@ -196,43 +231,21 @@ AddEventHandler('msk_backpack:updateStealInventoryBag', function(source, target)
     local xPlayer = ESX.GetPlayerFromId(source)
     local tPlayer = ESX.GetPlayerFromId(target)
 
-    tPlayer.showNotification(xPlayer.getName(source) .. _U('someone_searching'))
-    xPlayer.showNotification(_U('you_searching') .. tPlayer.getName(target))
+    tPlayer.showNotification(xPlayer.name .. _U('someone_searching'))
+    xPlayer.showNotification(_U('you_searching') .. tPlayer.name)
 end)
 
 -- Callbacks -- 
 ESX.RegisterServerCallback('msk_backpack:getTargetData', function(source, cb, target)
-    local xPlayer = ESX.GetPlayerFromId(source)
     local tPlayer = ESX.GetPlayerFromId(target)
 
-	cb(tPlayer.getName(target), tPlayer.getIdentifier(target))
+	cb(tPlayer.name, tPlayer.identifier)
 end)
 
 ESX.RegisterServerCallback('msk_backpack:getUserData', function(source, cb)
     local xPlayer = ESX.GetPlayerFromId(source)
 
-	cb(xPlayer.getName(), xPlayer.getIdentifier())
-end)
-
-ESX.RegisterServerCallback('msk_backpack:getPlayerSkin', function(source, cb, player)
-	local xPlayer = ESX.GetPlayerFromId(player)
-
-	MySQL.Async.fetchAll('SELECT skin FROM users WHERE identifier = @identifier', {
-		['@identifier'] = xPlayer.identifier
-	}, function(users)
-		local user, skin = users[1]
-
-		local jobSkin = {
-			skin_male   = xPlayer.job.skin_male,
-			skin_female = xPlayer.job.skin_female
-		}
-
-		if user.skin then
-			skin = json.decode(user.skin)
-		end
-
-		cb(skin, jobSkin)
-	end)
+	cb(xPlayer.name, xPlayer.identifier)
 end)
 ---- Chezza Inventory ----
 

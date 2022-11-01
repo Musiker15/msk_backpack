@@ -13,4 +13,6 @@ Locales ['en'] = {
 	['not_handsup'] = 'The player did not surrender yet.',
 	['player_noBag'] = 'That player does not have a backpack!',
 	['no_player_nearby'] = 'No players nearby!',
+
+	['entity_dead'] = 'The Player is dead.',
 }
