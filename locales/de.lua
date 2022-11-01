@@ -15,4 +15,5 @@ Locales ['de'] = {
 	['no_player_nearby'] = 'Keine Spieler in deiner Nähe!',
 
 	['entity_dead'] = 'Der Spieler ist tot.',
+	['too_heavy'] = 'Deine Taschen sind zu voll, du kannst die Tasche nicht absetzen.',
 }

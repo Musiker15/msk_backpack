@@ -108,6 +108,11 @@ ESX.RegisterUsableItem('nobag', function(source)
         ["@identifier"] = xPlayer.identifier
     })
 
+    if not xPlayer.canCarryItem(currentBag[1].bag, 1) then 
+        xPlayer.showNotification(_U('too_heavy'))
+        return 
+    end
+
     if Config.ItemsInBag then
         if Config.BagInventory:match('expand') then
             local playerWeight = xPlayer.getWeight()

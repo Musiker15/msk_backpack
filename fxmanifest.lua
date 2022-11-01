@@ -4,7 +4,7 @@ games { 'gta5' }
 author 'Musiker15 - MSK Scripts'
 name 'msk_backpack'
 description 'Multiple Backpack Items'
-version '3.4'
+version '3.5'
 
 shared_scripts {
 	'@es_extended/locale.lua',
