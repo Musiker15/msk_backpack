@@ -226,7 +226,7 @@ function itemsInBag(xPlayer, currentBag)
         end
     else 
         debug('result not found')
-        return false
+        return true
     end
 end
 
