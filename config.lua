@@ -7,7 +7,7 @@ Config.Debug = true
 Config.ItemsInBag = true -- Set true if you want that players cant use 'nobag' Item if there are Items in the Bag
 
 -- Expand the Inventory Space of the Player // Opens a Secondary Inventory by typing /openbag Command
-Config.BagInventory = 'secondary' -- 'expand' or 'secondary'
+Config.BagInventory = 'expand' -- 'expand' or 'secondary'
 
 -- If set to true go to client.lua and change the IDs to what you set in esx_parachute
 Config.useParachute = true -- Set true if you use my esx_parchute Script
