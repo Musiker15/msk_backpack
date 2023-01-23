@@ -22,7 +22,7 @@ Only if `Config.BagInventory = 'secondary'`!
 * ESX 1.2 // ESX Legacy
 * esx_skin and skinchanger
 * oxmysql
-* FiveM-Appaerance *(experimental)*
+* msk_core
 
 ### Optional
 Chezza Inventory only necessary if `Config.BagInventory = 'secondary'`!
