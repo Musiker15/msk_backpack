@@ -19,10 +19,10 @@ Only if `Config.BagInventory = 'secondary'`!
 * `/stealbag` - Open the Bag from Player next to you
 
 ## Requirements
-* ESX 1.2 // ESX Legacy
-* esx_skin and skinchanger
-* oxmysql
-* msk_core
+* [ESX 1.2 and above](https://github.com/esx-framework/esx_core)
+* [esx_skin and skinchanger](https://github.com/esx-framework/esx_core)
+* [oxmysql](https://github.com/overextended/oxmysql)
+* [msk_core](https://github.com/MSK-Scripts/msk_core)
 
 ### Optional
 Chezza Inventory only necessary if `Config.BagInventory = 'secondary'`!
