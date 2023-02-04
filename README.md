@@ -13,10 +13,23 @@
 * Steal Bag from closest Player with Command
 * Works with Character Names not FiveM Names
 
-## Events / Commands
+## Commands
 Only if `Config.BagInventory = 'secondary'`!
 * `/openbag` - Open your own Bag
 * `/stealbag` - Open the Bag from Player next to you
+
+## Exports
+You can use the exports clientside AND serverside
+```lua
+-- Returns the itemName saved in database or nil if the player don't has a Bag
+local hasBag = exports.msk_backpack:hasBag(player)
+```
+**Example**
+```lua
+exports.msk_backpack:hasBag({source = playerId})
+exports.msk_backpack:hasBag({identifier = playerIdentifier})
+exports.msk_backpack:hasBag({player = xPlayer})
+```
 
 ## Requirements
 * [ESX 1.2 and above](https://github.com/esx-framework/esx_core)
@@ -27,7 +40,7 @@ Only if `Config.BagInventory = 'secondary'`!
 ### Optional
 Chezza Inventory only necessary if `Config.BagInventory = 'secondary'`!
 
-* Chezza Inventory V4 (https://forum.cfx.re/t/paid-release-chezzas-inventory-esx/2040417)
+* [Chezza Inventory V4](https://forum.cfx.re/t/paid-release-chezzas-inventory-esx/2040417)
 
 ## Support for esx_ambulancejob
 
