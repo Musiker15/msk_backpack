@@ -4,7 +4,7 @@ MSK = exports.msk_core:getCoreObject()
 local currentBag, currentBagWeight = nil, nil
 
 RegisterNetEvent('esx:playerLoaded')
-AddEventHandler('esx:playerLoaded', function(xPlayer, isNew, skin)
+AddEventHandler('esx:playerLoaded', function(xPlayer, isNew)
     Wait(1000) -- Please Do Not Touch!
     logging('debug', 'Player loaded on Event esx:playerLoaded')
 
@@ -12,6 +12,8 @@ AddEventHandler('esx:playerLoaded', function(xPlayer, isNew, skin)
     if not hasBag then return end
 
     local skin = MSK.TriggerCallback('msk_backpack:getPlayerSkin', GetPlayerServerId(PlayerId()))
+    if not skin then return end
+
     if skin.sex == 0 then -- Male
         if skin.bags_1 == Config.Backpacks[hasBag].skin.male.skin1 then
             logging('debug', skin.bags_1, Config.Backpacks[hasBag].skin.male.skin1, Config.Backpacks[hasBag].weight)
@@ -19,15 +21,11 @@ AddEventHandler('esx:playerLoaded', function(xPlayer, isNew, skin)
             currentBagWeight = Config.Backpacks[hasBag].weight
             setJoinBag(hasBag, Config.Backpacks[hasBag].weight)
         else
-            if Config.FiveMAppearance then
-                SetPedComponentVariation(PlayerPedId(), 5, Config.Backpacks[hasBag].skin.male.skin1, Config.Backpacks[hasBag].skin.male.skin2)
-            else
-                TriggerEvent('skinchanger:change', "bags_1", Config.Backpacks[hasBag].skin.male.skin1)
-                TriggerEvent('skinchanger:change', "bags_2", Config.Backpacks[hasBag].skin.male.skin2)
-                TriggerEvent('skinchanger:getSkin', function(skin)
-                    TriggerServerEvent('msk_backpack:save', skin)
-                end)
-            end
+            TriggerEvent('skinchanger:change', "bags_1", Config.Backpacks[hasBag].skin.male.skin1)
+            TriggerEvent('skinchanger:change', "bags_2", Config.Backpacks[hasBag].skin.male.skin2)
+            TriggerEvent('skinchanger:getSkin', function(skin)
+                TriggerServerEvent('msk_backpack:save', skin)
+            end)
             setJoinBag(hasBag, Config.Backpacks[hasBag].weight)
         end
     else
@@ -37,15 +35,11 @@ AddEventHandler('esx:playerLoaded', function(xPlayer, isNew, skin)
             currentBagWeight = Config.Backpacks[hasBag].weight
             setJoinBag(hasBag, Config.Backpacks[hasBag].weight)
         else
-            if Config.FiveMAppearance then
-                SetPedComponentVariation(PlayerPedId(), 5, Config.Backpacks[hasBag].skin.female.skin1, Config.Backpacks[hasBag].skin.female.skin2)
-            else
-                TriggerEvent('skinchanger:change', "bags_1", Config.Backpacks[hasBag].skin.female.skin1)
-                TriggerEvent('skinchanger:change', "bags_2", Config.Backpacks[hasBag].skin.female.skin2)
-                TriggerEvent('skinchanger:getSkin', function(skin)
-                    TriggerServerEvent('msk_backpack:save', skin)
-                end)
-            end
+            TriggerEvent('skinchanger:change', "bags_1", Config.Backpacks[hasBag].skin.female.skin1)
+            TriggerEvent('skinchanger:change', "bags_2", Config.Backpacks[hasBag].skin.female.skin2)
+            TriggerEvent('skinchanger:getSkin', function(skin)
+                TriggerServerEvent('msk_backpack:save', skin)
+            end)
             setJoinBag(hasBag, Config.Backpacks[hasBag].weight)
         end
     end
@@ -62,25 +56,17 @@ AddEventHandler('msk_backpack:setBackpack', function(itemname, item)
 
     local skin = MSK.TriggerCallback('msk_backpack:getPlayerSkin', GetPlayerServerId(PlayerId()))
     if skin.sex == 0 then -- Male
-        if Config.FiveMAppearance then
-            SetPedComponentVariation(playerPed, 5, item.skin.male.skin1, item.skin.male.skin2)
-        else
-            TriggerEvent('skinchanger:change', "bags_1", item.skin.male.skin1)
-            TriggerEvent('skinchanger:change', "bags_2", item.skin.male.skin2)
-            TriggerEvent('skinchanger:getSkin', function(skin)
-                TriggerServerEvent('msk_backpack:save', skin)
-            end)
-        end
+        TriggerEvent('skinchanger:change', "bags_1", item.skin.male.skin1)
+        TriggerEvent('skinchanger:change', "bags_2", item.skin.male.skin2)
+        TriggerEvent('skinchanger:getSkin', function(skin)
+            TriggerServerEvent('msk_backpack:save', skin)
+        end)
     else -- Female
-        if Config.FiveMAppearance then
-            SetPedComponentVariation(playerPed, 5, item.skin.female.skin1, item.skin.female.skin2)
-        else
-            TriggerEvent('skinchanger:change', "bags_1", item.skin.female.skin1)
-            TriggerEvent('skinchanger:change', "bags_2", item.skin.female.skin2)
-            TriggerEvent('skinchanger:getSkin', function(skin)
-                TriggerServerEvent('msk_backpack:save', skin)
-            end)
-        end
+        TriggerEvent('skinchanger:change', "bags_1", item.skin.female.skin1)
+        TriggerEvent('skinchanger:change', "bags_2", item.skin.female.skin2)
+        TriggerEvent('skinchanger:getSkin', function(skin)
+            TriggerServerEvent('msk_backpack:save', skin)
+        end)
     end
 
     ESX.ShowNotification(_U('used_bag'))
@@ -98,27 +84,19 @@ AddEventHandler('msk_backpack:delBackpack', function()
     local skin = MSK.TriggerCallback('msk_backpack:getPlayerSkin', GetPlayerServerId(PlayerId()))
     if Config.useParachute then
         if skin.bags_1 ~= 63 then -- Parachute Skin - esx_parachute by me :)
-            if Config.FiveMAppearance then
-                SetPedComponentVariation(playerPed, 5, 0, 0)
-            else
-                TriggerEvent('skinchanger:change', "bags_1", 0)
-                TriggerEvent('skinchanger:change', "bags_2", 0)
-                TriggerEvent('skinchanger:getSkin', function(skin)
-                    TriggerServerEvent('msk_backpack:save', skin)
-                end)
-            end
-            logging('debug', 'Set Backpack to 0')
-        end
-    else
-        if Config.FiveMAppearance then
-            SetPedComponentVariation(playerPed, 5, 0, 0)
-        else
             TriggerEvent('skinchanger:change', "bags_1", 0)
             TriggerEvent('skinchanger:change', "bags_2", 0)
             TriggerEvent('skinchanger:getSkin', function(skin)
                 TriggerServerEvent('msk_backpack:save', skin)
             end)
+            logging('debug', 'Set Backpack to 0')
         end
+    else
+        TriggerEvent('skinchanger:change', "bags_1", 0)
+        TriggerEvent('skinchanger:change', "bags_2", 0)
+        TriggerEvent('skinchanger:getSkin', function(skin)
+            TriggerServerEvent('msk_backpack:save', skin)
+        end)
         logging('debug', 'Set Backpack to 0')
     end
 
@@ -132,15 +110,11 @@ AddEventHandler('msk_backpack:delBackpackDeath', function()
     currentBag = nil
     currentBagWeight = nil
 
-    if Config.FiveMAppearance then
-        SetPedComponentVariation(playerPed, 5, 0, 0)
-    else
-        TriggerEvent('skinchanger:change', "bags_1", 0)
-        TriggerEvent('skinchanger:change', "bags_2", 0)
-        TriggerEvent('skinchanger:getSkin', function(skin)
-            TriggerServerEvent('msk_backpack:save', skin)
-        end)
-    end
+    TriggerEvent('skinchanger:change', "bags_1", 0)
+    TriggerEvent('skinchanger:change', "bags_2", 0)
+    TriggerEvent('skinchanger:getSkin', function(skin)
+        TriggerServerEvent('msk_backpack:save', skin)
+    end)
     logging('debug', 'Set Backpack to 0')
     TriggerEvent("inventory:refresh")
 end)

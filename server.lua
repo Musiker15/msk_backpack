@@ -190,14 +190,13 @@ MSK.RegisterCallback('msk_backpack:getPlayerSkin', function(source, cb, playerId
 
 	MySQL.query('SELECT skin FROM users WHERE identifier = @identifier', {
 		['@identifier'] = xPlayer.identifier
-	}, function(users)
-		local user, skin = users[1]
-
-		if user.skin then
-			skin = json.decode(user.skin)
+	}, function(data)
+		if data and data[1].skin then
+            cb(json.decode(data[1].skin))
+        else
+            cb(false)
 		end
 
-		cb(skin)
 	end)
 end)
 
@@ -267,6 +266,7 @@ end)
 
 hasBag = function(player)
     local xPlayer 
+
     if player.source then
         xPlayer = ESX.GetPlayerFromId(player.source)
     elseif player.identifier then
@@ -275,11 +275,13 @@ hasBag = function(player)
         xPlayer = player.player
     end
 
+    if not xPlayer then return false end
     local data = MySQL.query.await("SELECT * FROM msk_backpack WHERE identifier = @identifier", {['@identifier'] = xPlayer.identifier})
 
     if data and data[1] and data[1].bag then
         return data[1].bag
     end
+
     return false
 end
 exports('hasBag', hasBag)

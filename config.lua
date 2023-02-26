@@ -18,7 +18,6 @@ Config.Animations = {
     time = 2 -- in seconds (default: 2 seconds)
 }
 
-Config.FiveMAppearance = false -- Set true if you use FiveM-Appearance
 Config.StealBagIfDead = true -- Set false if you dont want to steal a players bag if he is dead
 ----------------------------------------------------------------
 Config.Backpacks = {
