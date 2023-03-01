@@ -50,6 +50,7 @@ AddEventHandler('msk_backpack:setDeathStatus', function(isDead)
 
     if isDead then
         logging('debug', 'Player is dead, reset InvSpace and Backpack')
+
         if Config.BagInventory:match('expand') then
             setPlayerBag(xPlayer, ESX.GetConfig().MaxWeight)
         elseif Config.BagInventory:match('secondary') then
@@ -57,15 +58,17 @@ AddEventHandler('msk_backpack:setDeathStatus', function(isDead)
                 ["@identifier"] = xPlayer.identifier
             })
 
-            MySQL.query.await('DELETE FROM msk_backpack WHERE identifier = @identifier', { 
-                ['@identifier'] = xPlayer.identifier
-            })
             MySQL.update.await('UPDATE inventories SET data = @data WHERE type = @type AND identifier = @identifier', { 
                 ['@identifier'] = xPlayer.identifier,
                 ['@type'] = currentBag[1].bag,
                 ['@data'] = '[]',
             })
         end
+
+        MySQL.query.await('DELETE FROM msk_backpack WHERE identifier = @identifier', { 
+            ['@identifier'] = xPlayer.identifier
+        })
+
         xPlayer.triggerEvent('msk_backpack:delBackpackDeath')
     end
 end)
