@@ -11,7 +11,9 @@ AddEventHandler('esx:playerLoaded', function(xPlayer, isNew)
     local hasBag = hasBag({source = GetPlayerServerId(PlayerId())})
     if not hasBag then return end
 
-    local skin = MSK.TriggerCallback('msk_backpack:getPlayerSkin', GetPlayerServerId(PlayerId()))
+    if not Config.restoreBackpack then TriggerServerEvent('msk_backpack:setDeathStatus', false) return end
+
+    local skin = MSK.TriggerCallback('msk_backpack:getPlayerSkin')
     if not skin then return end
 
     if skin.sex == 0 then -- Male
@@ -23,9 +25,7 @@ AddEventHandler('esx:playerLoaded', function(xPlayer, isNew)
         else
             TriggerEvent('skinchanger:change', "bags_1", Config.Backpacks[hasBag].skin.male.skin1)
             TriggerEvent('skinchanger:change', "bags_2", Config.Backpacks[hasBag].skin.male.skin2)
-            TriggerEvent('skinchanger:getSkin', function(skin)
-                TriggerServerEvent('msk_backpack:save', skin)
-            end)
+            saveSkin()
             setJoinBag(hasBag, Config.Backpacks[hasBag].weight)
         end
     else
@@ -37,9 +37,7 @@ AddEventHandler('esx:playerLoaded', function(xPlayer, isNew)
         else
             TriggerEvent('skinchanger:change', "bags_1", Config.Backpacks[hasBag].skin.female.skin1)
             TriggerEvent('skinchanger:change', "bags_2", Config.Backpacks[hasBag].skin.female.skin2)
-            TriggerEvent('skinchanger:getSkin', function(skin)
-                TriggerServerEvent('msk_backpack:save', skin)
-            end)
+            saveSkin()
             setJoinBag(hasBag, Config.Backpacks[hasBag].weight)
         end
     end
@@ -54,20 +52,17 @@ AddEventHandler('msk_backpack:setBackpack', function(itemname, item)
 
     doAnimation(playerPed)
 
-    local skin = MSK.TriggerCallback('msk_backpack:getPlayerSkin', GetPlayerServerId(PlayerId()))
-    if skin.sex == 0 then -- Male
-        TriggerEvent('skinchanger:change', "bags_1", item.skin.male.skin1)
-        TriggerEvent('skinchanger:change', "bags_2", item.skin.male.skin2)
-        TriggerEvent('skinchanger:getSkin', function(skin)
-            TriggerServerEvent('msk_backpack:save', skin)
-        end)
-    else -- Female
-        TriggerEvent('skinchanger:change', "bags_1", item.skin.female.skin1)
-        TriggerEvent('skinchanger:change', "bags_2", item.skin.female.skin2)
-        TriggerEvent('skinchanger:getSkin', function(skin)
-            TriggerServerEvent('msk_backpack:save', skin)
-        end)
-    end
+    TriggerEvent('skinchanger:getSkin', function(skin)
+        if skin.sex == 0 then -- Male
+            TriggerEvent('skinchanger:change', "bags_1", item.skin.male.skin1)
+            TriggerEvent('skinchanger:change', "bags_2", item.skin.male.skin2)
+            saveSkin()
+        else -- Female
+            TriggerEvent('skinchanger:change', "bags_1", item.skin.female.skin1)
+            TriggerEvent('skinchanger:change', "bags_2", item.skin.female.skin2)
+            saveSkin()
+        end
+    end)
 
     ESX.ShowNotification(_U('used_bag'))
 end)
@@ -81,22 +76,19 @@ AddEventHandler('msk_backpack:delBackpack', function()
 
     doAnimation(playerPed)
 
-    local skin = MSK.TriggerCallback('msk_backpack:getPlayerSkin', GetPlayerServerId(PlayerId()))
     if Config.useParachute then
-        if skin.bags_1 ~= 63 then -- Parachute Skin - esx_parachute by me :)
-            TriggerEvent('skinchanger:change', "bags_1", 0)
-            TriggerEvent('skinchanger:change', "bags_2", 0)
-            TriggerEvent('skinchanger:getSkin', function(skin)
-                TriggerServerEvent('msk_backpack:save', skin)
-            end)
-            logging('debug', 'Set Backpack to 0')
-        end
+        TriggerEvent('skinchanger:getSkin', function(skin)
+            if skin.bags_1 ~= 63 then -- Parachute Skin - esx_parachute by me :)
+                TriggerEvent('skinchanger:change', "bags_1", 0)
+                TriggerEvent('skinchanger:change', "bags_2", 0)
+                saveSkin()
+                logging('debug', 'Set Backpack to 0')
+            end
+        end)
     else
         TriggerEvent('skinchanger:change', "bags_1", 0)
         TriggerEvent('skinchanger:change', "bags_2", 0)
-        TriggerEvent('skinchanger:getSkin', function(skin)
-            TriggerServerEvent('msk_backpack:save', skin)
-        end)
+        saveSkin()
         logging('debug', 'Set Backpack to 0')
     end
 
@@ -112,9 +104,7 @@ AddEventHandler('msk_backpack:delBackpackDeath', function()
 
     TriggerEvent('skinchanger:change', "bags_1", 0)
     TriggerEvent('skinchanger:change', "bags_2", 0)
-    TriggerEvent('skinchanger:getSkin', function(skin)
-        TriggerServerEvent('msk_backpack:save', skin)
-    end)
+    saveSkin()
     logging('debug', 'Set Backpack to 0')
     TriggerEvent("inventory:refresh")
 end)
@@ -123,22 +113,24 @@ if Config.BagInventory:match('secondary') then
     RegisterCommand('openbag', function()
         local hasBackpack = false
 
-        local skin = MSK.TriggerCallback('msk_backpack:getPlayerSkin', GetPlayerServerId(PlayerId()))
         if not IsPlayerDead(PlayerId()) then
-            for k, v in pairs(Config.Backpacks) do
-                if skin.sex == 0 then -- Male
-                    if skin.bags_1 == v.skin.male.skin1 then -- Bag Skin
-                        hasBackpack = true
-                    end
-                else -- Female
-                    if skin.bags_1 == v.skin.female.skin1 then -- Bag Skin
-                        hasBackpack = true
+            TriggerEvent('skinchanger:getSkin', function(skin)
+                for k, v in pairs(Config.Backpacks) do
+                    if skin.sex == 0 then -- Male
+                        if skin.bags_1 == v.skin.male.skin1 then -- Bag Skin
+                            hasBackpack = true
+                        end
+                    else -- Female
+                        if skin.bags_1 == v.skin.female.skin1 then -- Bag Skin
+                            hasBackpack = true
+                        end
                     end
                 end
-            end
+            end)
 
             if hasBackpack then
                 local name, identifier = MSK.TriggerCallback('msk_backpack:getUserData')
+
                 TriggerEvent('inventory:openInventory', {
                     type = currentBag,
                     id = identifier,
@@ -262,6 +254,15 @@ hasBag = function(player)
     return hasBag
 end
 exports('hasBag', hasBag)
+
+saveSkin = function()
+    if not Config.saveSkin then return end
+    Wait(100)
+
+    TriggerEvent('skinchanger:getSkin', function(skin)
+        TriggerServerEvent('msk_backpack:save', skin, Config.saveSkin)
+    end)
+end
 
 logging = function(code, ...)
     if Config.Debug then

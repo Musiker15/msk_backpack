@@ -65,12 +65,16 @@ AddEventHandler('msk_backpack:setDeathStatus', function(isDead)
             })
         end
 
-        MySQL.query.await('DELETE FROM msk_backpack WHERE identifier = @identifier', { 
-            ['@identifier'] = xPlayer.identifier
-        })
-
         xPlayer.triggerEvent('msk_backpack:delBackpackDeath')
+    else
+        if Config.BagInventory:match('expand') then
+            setPlayerBag(xPlayer, ESX.GetConfig().MaxWeight)
+        end
     end
+
+    MySQL.query.await('DELETE FROM msk_backpack WHERE identifier = @identifier', { 
+        ['@identifier'] = xPlayer.identifier
+    })
 end)
 
 for kbag, vbag in pairs(Config.Backpacks) do
@@ -178,7 +182,7 @@ ESX.RegisterUsableItem('nobag', function(source)
 end)
 
 RegisterServerEvent('msk_backpack:save')
-AddEventHandler('msk_backpack:save', function(skin)
+AddEventHandler('msk_backpack:save', function(skin, save)
     local src = source
 	local xPlayer = ESX.GetPlayerFromId(src)
 
@@ -189,29 +193,43 @@ AddEventHandler('msk_backpack:save', function(skin)
 end)
 
 MSK.RegisterCallback('msk_backpack:getPlayerSkin', function(source, cb, playerId)
-	local xPlayer = ESX.GetPlayerFromId(playerId)
+    local src = source
+	local xPlayer
+    
+    if playerId then
+        xPlayer = ESX.GetPlayerFromId(playerId)
+    else
+        xPlayer = ESX.GetPlayerFromId(src)
+    end
 
-	MySQL.query('SELECT skin FROM users WHERE identifier = @identifier', {
+    if not xPlayer then return end
+
+    local skin = false
+	local data = MySQL.query('SELECT skin FROM users WHERE identifier = @identifier', {
 		['@identifier'] = xPlayer.identifier
-	}, function(data)
-		if data and data[1].skin then
-            cb(json.decode(data[1].skin))
-        else
-            cb(false)
-		end
+	})
 
-	end)
+    if data and data[1] and data[1].skin then
+        skin = json.decode(data[1].skin)
+    end
+
+    cb(skin)
 end)
 
 setPlayerBag = function(xPlayer, weight)
     if xPlayer then
         logging('debug', 'setPlayerBag:', weight)
-        CreateThread(function()
-            while true do
-                Wait(0)
-                xPlayer.setMaxWeight(weight)
-            end
-        end)
+
+        if Config.ChezzaInventory then
+            CreateThread(function()
+                while true do
+                    Wait(0)
+                    xPlayer.setMaxWeight(weight)
+                end
+            end)
+        else
+            xPlayer.setMaxWeight(weight)
+        end
     end
 end
 
@@ -226,7 +244,7 @@ itemsInBag = function(xPlayer, currentBag)
         logging('debug', 'type: ' .. result[1].type)
         logging('debug', 'data: ' .. result[1].data)
 
-        if result[1].data == '[]' then
+        if not result[1].data or result[1].data == '[]' then
             logging('debug', 'Bag is empty')
             return true
         else
@@ -234,7 +252,7 @@ itemsInBag = function(xPlayer, currentBag)
             return false
         end
     else 
-        logging('debug', 'result not found')
+        logging('error', 'result not found')
         return true
     end
 end
