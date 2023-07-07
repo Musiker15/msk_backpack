@@ -1,10 +1,16 @@
-ESX = exports["es_extended"]:getSharedObject()
-MSK = exports.msk_core:getCoreObject()
-
 local currentBag, currentBagWeight = nil, nil
 
+RegisterNetEvent('esx:setMaxWeight')
+AddEventHandler('esx:setMaxWeight', function(maxWeight)
+    logging('debug', 'esx:setMaxWeight', maxWeight)
+
+    if ESX.GetConfig().MaxWeight == maxWeight and currentBag and currentBagWeight then
+        setJoinBag(currentBag, currentBagWeight)
+    end
+end)
+
 RegisterNetEvent('esx:playerLoaded')
-AddEventHandler('esx:playerLoaded', function(xPlayer, isNew)
+AddEventHandler('esx:playerLoaded', function(xPlayer, isNew, skin)
     Wait(1000) -- Please Do Not Touch!
     logging('debug', 'Player loaded on Event esx:playerLoaded')
 
@@ -12,8 +18,6 @@ AddEventHandler('esx:playerLoaded', function(xPlayer, isNew)
     if not hasBag then return end
 
     if not Config.restoreBackpack then TriggerServerEvent('msk_backpack:setDeathStatus', false) return end
-
-    local skin = MSK.TriggerCallback('msk_backpack:getPlayerSkin')
     if not skin then return end
 
     if skin.sex == 0 then -- Male
@@ -222,8 +226,8 @@ if Config.BagInventory:match('secondary') then
                     Wait(1)
                     player, playerDistance = ESX.Game.GetClosestPlayer()
     
-                    if playerDistance > 3.0 then 
-                        TriggerEvent('inventory:close')
+                    if playerDistance > 3.0 then
+                        exports.inventory:CloseInventory()
                         break
                     end
                 end
@@ -250,8 +254,8 @@ setJoinBag = function(item, weight)
 end
 
 hasBag = function(player)
-    local hasBag = MSK.TriggerCallback('msk_backpack:hasBag', player)
-    return hasBag
+    if not player then return end
+    return MSK.TriggerCallback('msk_backpack:hasBag', player)
 end
 exports('hasBag', hasBag)
 
@@ -260,13 +264,13 @@ saveSkin = function()
     Wait(100)
 
     TriggerEvent('skinchanger:getSkin', function(skin)
-        TriggerServerEvent('msk_backpack:save', skin, Config.saveSkin)
+        TriggerServerEvent('msk_backpack:save', skin)
     end)
 end
 
 logging = function(code, ...)
-    if Config.Debug then
-        local script = "[^2"..GetCurrentResourceName().."^0]"
-        MSK.logging(script, code, ...)
-    end
+    if not Config.Debug then return end
+    
+    local script = "[^2"..GetCurrentResourceName().."^0]"
+    MSK.logging(script, code, ...)
 end

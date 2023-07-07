@@ -1,7 +1,7 @@
 # Not longer Supported
 
 # msk_backpack
-**FiveM Script - Multiple Backpack Items**
+**[ESX] Multiple Backpack Items**
 
 * **Forum:** https://forum.cfx.re/t/release-esx-usable-backpack-item/4805469
 * **Discord Support:** https://discord.gg/5hHSBRHvJE
@@ -34,7 +34,7 @@ exports.msk_backpack:hasBag({player = xPlayer})
 ```
 
 ## Requirements
-* [ESX 1.2 and above](https://github.com/esx-framework/esx_core)
+* [ESX Legacy](https://github.com/esx-framework/esx_core)
 * [esx_skin and skinchanger](https://github.com/esx-framework/esx_core)
 * [oxmysql](https://github.com/overextended/oxmysql)
 * [msk_core](https://github.com/MSK-Scripts/msk_core)
@@ -77,15 +77,17 @@ Replace it with this: `RespawnPed(PlayerPedId(), RespawnCoords, ClosestHospital.
 </details>
 
 ## My other Scripts
-#### PAID
+#### Paid
 * [[ESX] MSK Armor | Multiple Armor Vests](https://forum.cfx.re/t/release-esx-armor-script-usable-armor-vests-status-will-be-saved-in-database-and-restore-after-relog/4812243)
-* [[ESX] MSK Banking | Advanced Bankingsystem](https://forum.cfx.re/t/esx-msk-bankingsystem-with-nativeui/4859560)
-* [[ESX] MSK Crafting | with NativeUI](https://forum.cfx.re/t/esx-msk-crafting-with-nativeui/4898261)
-* [[ESX] MSK Garage & Impound | with NativeUI](https://forum.cfx.re/t/esx-msk-garage-and-impound-with-nativeui/4947059)
+* [[ESX] MSK Banking with NativeUI](https://forum.cfx.re/t/esx-msk-bankingsystem-with-nativeui/4859560)
+* [[ESX] MSK Crafting with NativeUI](https://forum.cfx.re/t/esx-msk-crafting-with-nativeui/4898261)
+* [[ESX] MSK Garage and Impound with NativeUI](https://forum.cfx.re/t/esx-msk-garage-and-impound-with-nativeui/4947059)
+* [[ESX] MSK Garage NativeUI - Garage & Impounds](https://forum.cfx.re/t/esx-msk-garage-and-impound/5122014)
 * [[ESX] MSK Handcuffs | Realistic Handcuffs](https://forum.cfx.re/t/esx-msk-handcuffs-realistic-handcuffs/4885324)
-* [[ESX] MSK Shopsystem | NativeUI & Database Feature](https://forum.cfx.re/t/release-esx-msk-shopsystem-nativeui-database-feature/4853593)
+* [[ESX] MSK Shopsystem with NativeUI & Database Feature](https://forum.cfx.re/t/release-esx-msk-shopsystem-nativeui-database-feature/4853593)
 * [[ESX/QBCore] MSK Simcard | Change your phonenumber](https://forum.cfx.re/t/release-esx-qbcore-usable-simcard/4847008)
 * [[ESX] MSK WeaponAmmo | Clips, Components & Tints](https://forum.cfx.re/t/release-esx-weapon-ammunition-with-clips-components-tints/4793783)
-#### FREE
-* [[ESX] MSK Deathcounter - integrated in myMultichar](https://forum.cfx.re/t/release-esx-msk-deathcounter-integrated-in-mymultichar/4863428)
-* [[ESX] MSK SaveCoordMenu](https://forum.cfx.re/t/esx-msk-savecoordmenu/4898218)
+
+#### Free
+* [MSK Scripts Repositories](https://github.com/MSK-Scripts)
+* [Musiker15's Repositories](https://github.com/Musiker15)

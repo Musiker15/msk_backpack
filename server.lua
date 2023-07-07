@@ -1,13 +1,4 @@
-ESX = exports["es_extended"]:getSharedObject()
-MSK = exports.msk_core:getCoreObject()
-
 AddEventHandler('onResourceStart', function(resource)
-    if GetCurrentResourceName() ~= 'msk_backpack' then
-        print('^1Please rename the Script to ^3msk_backpack^0!')
-        print('^1Server will be shutdown^0!')
-        os.exit()
-    end
-
     if GetCurrentResourceName() == resource then
         local createTable = MySQL.query.await("CREATE TABLE IF NOT EXISTS msk_backpack (`identifier` varchar(80) NOT NULL, `bag` longtext DEFAULT NULL, PRIMARY KEY (`identifier`));")
 
@@ -21,11 +12,9 @@ local setDebug = false
 if Config.Debug and Config.BagInventory:match('expand') and setDebug then
     CreateThread(function()
         while true do
-            for k, players in pairs(GetPlayers()) do
-                local xPlayer = ESX.GetPlayerFromId(players)
-
+            for k, xPlayer in pairs(ESX.GetExtendedPlayers()) do
                 if xPlayer then
-                    logging('debug', 'DEBUG playerMaxWeight:', xPlayer.source, xPlayer.getMaxWeight())
+                    logging('debug', 'DEBUG playerMaxWeight:', xPlayer.source, xPlayer.getMaxWeight(), xPlayer.maxWeight)
                 end
             end
 
@@ -33,6 +22,17 @@ if Config.Debug and Config.BagInventory:match('expand') and setDebug then
         end
     end)
 end
+
+RegisterServerEvent('msk_backpack:save')
+AddEventHandler('msk_backpack:save', function(skin)
+    local src = source
+	local xPlayer = ESX.GetPlayerFromId(src)
+
+	MySQL.update('UPDATE users SET skin = @skin WHERE identifier = @identifier', {
+		['@skin'] = json.encode(skin),
+		['@identifier'] = xPlayer.identifier
+	})
+end)
 
 RegisterServerEvent('msk_backpack:setJoinBag')
 AddEventHandler('msk_backpack:setJoinBag', function(itemname, weight)
@@ -181,17 +181,6 @@ ESX.RegisterUsableItem('nobag', function(source)
     end
 end)
 
-RegisterServerEvent('msk_backpack:save')
-AddEventHandler('msk_backpack:save', function(skin, save)
-    local src = source
-	local xPlayer = ESX.GetPlayerFromId(src)
-
-	MySQL.update('UPDATE users SET skin = @skin WHERE identifier = @identifier', {
-		['@skin'] = json.encode(skin),
-		['@identifier'] = xPlayer.identifier
-	})
-end)
-
 MSK.RegisterCallback('msk_backpack:getPlayerSkin', function(source, cb, playerId)
     local src = source
 	local xPlayer
@@ -218,18 +207,10 @@ end)
 
 setPlayerBag = function(xPlayer, weight)
     if xPlayer then
+        weight = tonumber(weight)
         logging('debug', 'setPlayerBag:', weight)
 
-        if Config.ChezzaInventory then
-            CreateThread(function()
-                while true do
-                    Wait(0)
-                    xPlayer.setMaxWeight(weight)
-                end
-            end)
-        else
-            xPlayer.setMaxWeight(weight)
-        end
+        xPlayer.setMaxWeight(weight)
     end
 end
 
@@ -240,9 +221,7 @@ itemsInBag = function(xPlayer, currentBag)
     })
 
     if result[1] then
-        logging('debug', 'identifier: ' .. result[1].identifier)
-        logging('debug', 'type: ' .. result[1].type)
-        logging('debug', 'data: ' .. result[1].data)
+        logging('debug', 'identifier: ' .. result[1].identifier, 'type: ' .. result[1].type, 'data: ' .. result[1].data)
 
         if not result[1].data or result[1].data == '[]' then
             logging('debug', 'Bag is empty')
@@ -274,8 +253,10 @@ MSK.RegisterCallback('msk_backpack:getTargetData', function(source, cb, target)
 	cb(tPlayer.name, tPlayer.identifier)
 end)
 
-MSK.RegisterCallback('msk_backpack:getUserData', function(source, cb)
-    local xPlayer = ESX.GetPlayerFromId(source)
+MSK.RegisterCallback('msk_backpack:getUserData', function(source, cb, playerId)
+    local src = source
+    if playerId then src = playerId end
+    local xPlayer = ESX.GetPlayerFromId(src)
 
 	cb(xPlayer.name, xPlayer.identifier)
 end)
@@ -286,6 +267,7 @@ MSK.RegisterCallback('msk_backpack:hasBag', function(source, cb, player)
 end)
 
 hasBag = function(player)
+    if not player then return end
     local xPlayer 
 
     if player.source then
@@ -299,20 +281,17 @@ hasBag = function(player)
     if not xPlayer then return false end
     local data = MySQL.query.await("SELECT * FROM msk_backpack WHERE identifier = @identifier", {['@identifier'] = xPlayer.identifier})
 
-    if data and data[1] and data[1].bag then
-        return data[1].bag
-    end
-
+    if data and data[1] and data[1].bag then return data[1].bag end
     return false
 end
 exports('hasBag', hasBag)
 
 
 logging = function(code, ...)
-    if Config.Debug then
-        local script = "[^2"..GetCurrentResourceName().."^0]"
-        MSK.logging(script, code, ...)
-    end
+    if not Config.Debug then return end
+
+    local script = "[^2"..GetCurrentResourceName().."^0]"
+    MSK.logging(script, code, ...)
 end
 
 GithubUpdater = function()
